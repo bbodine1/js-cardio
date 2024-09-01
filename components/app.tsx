@@ -38,10 +38,21 @@ export function App() {
 	const [results, setResults] = useState('')
 	const [consoleOutput, setConsoleOutput] = useState('')
 	const [theme, setTheme] = useState('light')
-	const [tests, setTests] = useState<Test[]>([])
 	const [currentTest, setCurrentTest] = useState<Test | null>(null)
 	const [newTestName, setNewTestName] = useState('')
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+
+	const [tests, setTests] = useState<Test[]>(() => {
+		const savedTests = localStorage.getItem('jsTests')
+		if (savedTests) {
+			try {
+				return JSON.parse(savedTests)
+			} catch (error) {
+				console.error('Error parsing saved tests:', error)
+			}
+		}
+		return []
+	})
 
 	useEffect(() => {
 		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -55,45 +66,6 @@ export function App() {
 	useEffect(() => {
 		localStorage.setItem('jsTests', JSON.stringify(tests))
 	}, [tests])
-
-	// const runCode = useCallback(() => {
-	// 	let output = ''
-	// 	const originalLog = console.log
-	// 	console.log = (...args) => {
-	// 		output += args.join(' ') + '\n'
-	// 		originalLog.apply(console, args)
-	// 	}
-
-	// 	const assertionResults: string[] = []
-	// 	const assert = (condition: any, message = 'Assertion failed') => {
-	// 		if (!condition) {
-	// 			throw new Error(message)
-	// 		}
-	// 	}
-
-	// 	try {
-	// 		// Run user code
-	// 		eval(code)
-
-	// 		// Run assertions
-	// 		const assertionLines = assertions.split('\n').filter(line => line.trim().startsWith('assert('))
-	// 		assertionLines.forEach((assertion, index) => {
-	// 			try {
-	// 				eval(assertion)
-	// 				assertionResults.push(`✅ Assertion ${index + 1} passed`)
-	// 			} catch (error: any) {
-	// 				assertionResults.push(`❌ Assertion ${index + 1} failed: ${error.message}`)
-	// 			}
-	// 		})
-
-	// 		setResults(assertionResults.join('\n'))
-	// 	} catch (error: any) {
-	// 		setResults(`Error: ${error.message}`)
-	// 	} finally {
-	// 		console.log = originalLog
-	// 		setConsoleOutput(output)
-	// 	}
-	// }, [code, assertions])
 
 	const runCode = useCallback(() => {
 		let output = ''
@@ -184,7 +156,7 @@ export function App() {
 				code: '// Write your JavaScript code here',
 				assertions: '// Write your assertions here',
 			}
-			setTests([...tests, newTest])
+			setTests(prevTests => [...prevTests, newTest])
 			setCurrentTest(newTest)
 			setCode(newTest.code)
 			setAssertions(newTest.assertions)
@@ -194,16 +166,14 @@ export function App() {
 
 	const saveCurrentTest = () => {
 		if (currentTest) {
-			const updatedTests = tests.map(test => (test.id === currentTest.id ? { ...test, code, assertions } : test))
-			setTests(updatedTests)
+			setTests(prevTests => prevTests.map(test => (test.id === currentTest.id ? { ...test, code, assertions } : test)))
 			setCurrentTest({ ...currentTest, code, assertions })
 		}
 	}
 
 	const deleteCurrentTest = () => {
 		if (currentTest) {
-			const updatedTests = tests.filter(test => test.id !== currentTest.id)
-			setTests(updatedTests)
+			setTests(prevTests => prevTests.filter(test => test.id !== currentTest.id))
 			setCurrentTest(null)
 			setCode('// Write your JavaScript code here')
 			setAssertions('// Write your assertions here')
