@@ -19,7 +19,7 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from '@/components/ui/dialog'
-import { Moon, Sun, X, Plus, Save, Edit, Trash, Play } from 'lucide-react'
+import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo } from 'lucide-react'
 
 type Test = {
 	id: string
@@ -188,6 +188,13 @@ export function App() {
 		}
 	}
 
+	const resetEditor = useCallback(() => {
+		if (currentTest) {
+			setCode(currentTest.code)
+			setAssertions(currentTest.assertions)
+		}
+	}, [currentTest])
+
 	const selectTest = (testId: string) => {
 		const selected = tests.find(test => test.id === testId)
 		if (selected) {
@@ -338,7 +345,20 @@ export function App() {
 			</div>
 			<div className="grid grid-cols-2 gap-4">
 				<div>
-					<h2 className="mb-2">Code Editor</h2>
+					<div className="flex justify-between items-center mb-2">
+						<h2 className="mb-2">Code Editor</h2>
+
+						<Button
+							onClick={resetEditor}
+							variant="ghost"
+							size="sm"
+							disabled={!currentTest}
+						>
+							<Undo className="h-4 w-4 mr-1" />
+							Reset
+						</Button>
+					</div>
+
 					<CodeMirror
 						value={code}
 						height="200px"
