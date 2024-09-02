@@ -43,16 +43,24 @@ export function App() {
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
 
 	const [tests, setTests] = useState<Test[]>(() => {
-		const savedTests = localStorage.getItem('jsTests')
-		if (savedTests) {
-			try {
-				return JSON.parse(savedTests)
-			} catch (error) {
-				console.error('Error parsing saved tests:', error)
+		if (typeof window !== 'undefined') {
+			const savedTests = localStorage.getItem('jsTests')
+			if (savedTests) {
+				try {
+					return JSON.parse(savedTests)
+				} catch (error) {
+					console.error('Error parsing saved tests:', error)
+				}
 			}
 		}
 		return []
 	})
+
+	useEffect(() => {
+		if (typeof window !== 'undefined') {
+			localStorage.setItem('jsTests', JSON.stringify(tests))
+		}
+	}, [tests])
 
 	useEffect(() => {
 		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
