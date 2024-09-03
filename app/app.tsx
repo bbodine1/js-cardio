@@ -381,13 +381,22 @@ export function App() {
 									<Undo className="h-4 w-4 mr-1" />
 									Reset
 								</Button>
-								<Button
-									onClick={() => toggleMaximizedEditor('code')}
-									variant="ghost"
-									size="sm"
-								>
-									{maximizedEditor === 'code' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-								</Button>
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												onClick={() => toggleMaximizedEditor('code')}
+												variant="ghost"
+												size="sm"
+											>
+												{maximizedEditor === 'code' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>{maximizedEditor === 'code' ? 'Minimize (Esc)' : 'Maximize (⌘M or Ctrl+M)'}</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
 							</div>
 						</div>
 						<CodeMirror
@@ -414,13 +423,22 @@ export function App() {
 									<Undo className="h-4 w-4 mr-1" />
 									Reset
 								</Button>
-								<Button
-									onClick={() => toggleMaximizedEditor('assertions')}
-									variant="ghost"
-									size="sm"
-								>
-									{maximizedEditor === 'assertions' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-								</Button>
+								<TooltipProvider>
+									<Tooltip>
+										<TooltipTrigger asChild>
+											<Button
+												onClick={() => toggleMaximizedEditor('assertions')}
+												variant="ghost"
+												size="sm"
+											>
+												{maximizedEditor === 'assertions' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+											</Button>
+										</TooltipTrigger>
+										<TooltipContent>
+											<p>{maximizedEditor === 'assertions' ? 'Minimize (Esc)' : 'Maximize (⌘M or Ctrl+M)'}</p>
+										</TooltipContent>
+									</Tooltip>
+								</TooltipProvider>
 							</div>
 						</div>
 						<CodeMirror
