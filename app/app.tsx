@@ -13,7 +13,6 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from '@/components/ui/dialog'
 import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
@@ -39,8 +38,21 @@ export function App() {
 	const [consoleOutput, setConsoleOutput] = useState('')
 	const [theme, setTheme] = useState('light')
 	const [currentTest, setCurrentTest] = useState<Test | null>(null)
-	const [newTestName, setNewTestName] = useState('')
-	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+	const [dialogState, setDialogState] = useState<{
+		isOpen: boolean
+		type: 'new' | 'edit'
+		title: string
+		description: string
+		inputValue: string
+		onSave: () => void
+	}>({
+		isOpen: false,
+		type: 'new',
+		title: '',
+		description: '',
+		inputValue: '',
+		onSave: () => {},
+	})
 
 	const [tests, setTests] = useState<Test[]>(() => {
 		if (typeof window !== 'undefined') {
@@ -113,7 +125,6 @@ export function App() {
   
         ${assertions}
       `
-
 			// Run combined code
 			eval(combinedCode)
 
@@ -168,19 +179,48 @@ export function App() {
 		setConsoleOutput('')
 	}
 
-	const createNewTest = () => {
-		if (newTestName.trim()) {
-			const newTest: Test = {
-				id: Date.now().toString(),
-				name: newTestName,
-				code: '// Write your JavaScript code here',
-				assertions: '// Write your assertions here',
-			}
-			setTests(prevTests => [...prevTests, newTest])
-			setCurrentTest(newTest)
-			setCode(newTest.code)
-			setAssertions(newTest.assertions)
-			setNewTestName('')
+	const openNewTestDialog = () => {
+		setDialogState({
+			isOpen: true,
+			type: 'new',
+			title: 'Create New Test',
+			description: 'Enter a name for your new test.',
+			inputValue: '',
+			onSave: () => {
+				if (dialogState.inputValue.trim()) {
+					const newTest: Test = {
+						id: Date.now().toString(),
+						name: dialogState.inputValue,
+						code: '// Write your JavaScript code here',
+						assertions: '// Write your assertions here',
+					}
+					setTests(prevTests => [...prevTests, newTest])
+					setCurrentTest(newTest)
+					setCode(newTest.code)
+					setAssertions(newTest.assertions)
+					setDialogState(prev => ({ ...prev, isOpen: false }))
+				}
+			},
+		})
+	}
+
+	const openEditTestDialog = () => {
+		if (currentTest) {
+			setDialogState({
+				isOpen: true,
+				type: 'edit',
+				title: 'Edit Test',
+				description: 'Edit the name of your test.',
+				inputValue: currentTest.name,
+				onSave: () => {
+					const updatedTests = tests.map(test =>
+						test.id === currentTest.id ? { ...currentTest, name: dialogState.inputValue } : test
+					)
+					setTests(updatedTests)
+					setCurrentTest(prev => prev ? { ...prev, name: dialogState.inputValue } : null)
+					setDialogState(prev => ({ ...prev, isOpen: false }))
+				},
+			})
 		}
 	}
 
@@ -215,7 +255,6 @@ export function App() {
 			setAssertions(selected.assertions)
 		}
 	}
-
 
 	const editorTheme = theme === 'dark' ? vscodeDarkTheme : vscodeLightTheme
 
@@ -254,28 +293,13 @@ export function App() {
 				</Select>
 
 				<div className="flex gap-2">
-					<Dialog>
-						<DialogTrigger asChild>
-							<Button variant={theme === 'dark' ? 'ghost' : 'default'}>
-								<Plus className="h-4 w-4 mr-2" />
-								New Test
-							</Button>
-						</DialogTrigger>
-						<DialogContent>
-							<DialogHeader>
-								<DialogTitle>Create New Test</DialogTitle>
-								<DialogDescription>Enter a name for your new test.</DialogDescription>
-							</DialogHeader>
-							<Input
-								value={newTestName}
-								onChange={e => setNewTestName(e.target.value)}
-								placeholder="Test name"
-							/>
-							<DialogFooter>
-								<Button onClick={createNewTest}>Create</Button>
-							</DialogFooter>
-						</DialogContent>
-					</Dialog>
+					<Button 
+						variant={theme === 'dark' ? 'ghost' : 'default'} 
+						onClick={openNewTestDialog}
+					>
+						<Plus className="h-4 w-4 mr-2" />
+						New Test
+					</Button>
 					<Button
 						onClick={saveCurrentTest}
 						disabled={!currentTest}
@@ -285,7 +309,7 @@ export function App() {
 						Save
 					</Button>
 					<Button
-						onClick={() => setIsEditDialogOpen(true)}
+						onClick={openEditTestDialog}
 						disabled={!currentTest}
 						variant={theme === 'dark' ? 'ghost' : 'default'}
 					>
@@ -400,32 +424,21 @@ export function App() {
 				Run Code
 			</Button>
 
-			<Dialog
-				open={isEditDialogOpen}
-				onOpenChange={setIsEditDialogOpen}
-			>
+			<Dialog open={dialogState.isOpen} onOpenChange={(isOpen) => setDialogState(prev => ({ ...prev, isOpen }))}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>Edit Test</DialogTitle>
-						<DialogDescription>Edit the name of your test.</DialogDescription>
+						<DialogTitle>{dialogState.title}</DialogTitle>
+						<DialogDescription>{dialogState.description}</DialogDescription>
 					</DialogHeader>
+
 					<Input
-						value={currentTest?.name || ''}
-						onChange={e => setCurrentTest(prev => (prev ? { ...prev, name: e.target.value } : null))}
+						value={dialogState.inputValue}
+						onChange={(e) => setDialogState(prev => ({ ...prev, inputValue: e.target.value }))}
 						placeholder="Test name"
 					/>
+
 					<DialogFooter>
-						<Button
-							onClick={() => {
-								if (currentTest) {
-									const updatedTests = tests.map(test => (test.id === currentTest.id ? { ...currentTest } : test))
-									setTests(updatedTests)
-									setIsEditDialogOpen(false)
-								}
-							}}
-						>
-							Save
-						</Button>
+						<Button onClick={dialogState.onSave}>Save</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
