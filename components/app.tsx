@@ -74,7 +74,15 @@ export function App() {
 		setTheme(prefersDark ? 'dark' : 'light')
 		const savedTests = localStorage.getItem(lsKey)
 		if (savedTests) {
-			setTests(JSON.parse(savedTests))
+			const parsedTests = JSON.parse(savedTests)
+			setTests(parsedTests)
+			// Set the first test as the active test
+			if (parsedTests.length > 0) {
+				const firstTest = parsedTests[0]
+				setCurrentTest(firstTest)
+				setCode(firstTest.code)
+				setAssertions(firstTest.assertions)
+			}
 		}
 	}, [])
 
@@ -286,7 +294,10 @@ export function App() {
 				</Button>
 			</div>
 			<div className="flex justify-between items-center mb-4">
-				<Select onValueChange={selectTest}>
+				<Select 
+					onValueChange={selectTest} 
+					value={currentTest?.id}
+				>
 					<SelectTrigger className="w-[180px]">
 						<SelectValue placeholder="Select a test" />
 					</SelectTrigger>
