@@ -59,6 +59,7 @@ export function App() {
 		inputValue: '',
 		onSave: () => {},
 	})
+	const [isShortcutsDialogOpen, setIsShortcutsDialogOpen] = useState(false);
 
 	const [tests, setTests] = useState<Test[]>(() => {
 		if (typeof window !== 'undefined') {
@@ -283,12 +284,19 @@ export function App() {
 				} else if (assertionsEditorRef.current?.contains(activeElement)) {
 					toggleMaximizedEditor('assertions');
 				}
+			} else if (event.key === '/') {
+				event.preventDefault();
+				setIsShortcutsDialogOpen(prev => !prev);
 			}
-		} else if (event.key === 'Escape' && maximizedEditor) {
-			event.preventDefault();
-			setMaximizedEditor(null);
+		} else if (event.key === 'Escape') {
+			if (maximizedEditor) {
+				event.preventDefault();
+				setMaximizedEditor(null);
+			} else if (isShortcutsDialogOpen) {
+				setIsShortcutsDialogOpen(false);
+			}
 		}
-	}, [toggleMaximizedEditor, maximizedEditor]);
+	}, [toggleMaximizedEditor, maximizedEditor, isShortcutsDialogOpen]);
 
 	useEffect(() => {
 		document.addEventListener('keydown', handleKeyDown);
@@ -296,6 +304,35 @@ export function App() {
 			document.removeEventListener('keydown', handleKeyDown);
 		};
 	}, [handleKeyDown]);
+
+	const ShortcutsDialog = () => (
+		<Dialog open={isShortcutsDialogOpen} onOpenChange={setIsShortcutsDialogOpen}>
+			<DialogContent className="sm:max-w-[600px]">
+				<DialogHeader>
+					<DialogTitle>Keyboard Shortcuts</DialogTitle>
+					<DialogDescription>
+						Here are all the available keyboard shortcuts:
+					</DialogDescription>
+				</DialogHeader>
+				<div className="grid grid-cols-2 gap-4">
+					<div>
+						<h3 className="font-semibold">General</h3>
+						<ul className="list-disc list-inside">
+							<li>⌘/ or Ctrl+/: Toggle this dialog</li>
+							<li>⌘S or Ctrl+S: Run Code</li>
+						</ul>
+					</div>
+					<div>
+						<h3 className="font-semibold">Editors</h3>
+						<ul className="list-disc list-inside">
+							<li>⌘M or Ctrl+M: Maximize/Minimize focused editor</li>
+							<li>Esc: Minimize maximized editor</li>
+						</ul>
+					</div>
+				</div>
+			</DialogContent>
+		</Dialog>
+	);
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
@@ -525,6 +562,8 @@ export function App() {
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
+
+			<ShortcutsDialog />
 		</div>
 	)
 }
