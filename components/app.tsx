@@ -3,12 +3,10 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
-import { EditorView } from '@codemirror/view'
 import { tags as t } from '@lezer/highlight'
 import { createTheme } from '@uiw/codemirror-themes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import {
 	Dialog,
@@ -294,8 +292,8 @@ export function App() {
 				</Button>
 			</div>
 			<div className="flex justify-between items-center mb-4">
-				<Select 
-					onValueChange={selectTest} 
+				<Select
+					onValueChange={selectTest}
 					value={currentTest?.id}
 				>
 					<SelectTrigger className="w-[180px]">
