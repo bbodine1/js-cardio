@@ -14,7 +14,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
-import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo } from 'lucide-react'
+import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo, Maximize2, Minimize2 } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
 
@@ -258,6 +258,12 @@ export function App() {
 
 	const editorTheme = theme === 'dark' ? vscodeDarkTheme : vscodeLightTheme
 
+	const [maximizedEditor, setMaximizedEditor] = useState<'code' | 'assertions' | null>(null);
+
+	const toggleMaximizedEditor = (editor: 'code' | 'assertions') => {
+		setMaximizedEditor(prev => prev === editor ? null : editor);
+	};
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<div className="flex justify-between items-center mb-4">
@@ -327,90 +333,107 @@ export function App() {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-2 gap-4">
-				<div>
-					<div className="flex justify-between items-center mb-2">
-						<h2 className="mb-2">Code Editor</h2>
+			<div className={`grid ${maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+				{(!maximizedEditor || maximizedEditor === 'code') && (
+					<div className={maximizedEditor === 'code' ? 'col-span-2' : ''}>
+						<div className="flex justify-between items-center mb-2">
+							<h2 className="mb-2">Code Editor</h2>
+							<div className="flex gap-2">
+								<Button
+									onClick={resetEditor}
+									variant="ghost"
+									size="sm"
+									disabled={!currentTest}
+								>
+									<Undo className="h-4 w-4 mr-1" />
+									Reset
+								</Button>
+								<Button
+									onClick={() => toggleMaximizedEditor('code')}
+									variant="ghost"
+									size="sm"
+								>
+									{maximizedEditor === 'code' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+								</Button>
+							</div>
+						</div>
+						<CodeMirror
+							value={code}
+							height={maximizedEditor === 'code' ? 'calc(100vh - 400px)' : '200px'}
+							extensions={[javascript({ jsx: true })]}
+							onChange={value => setCode(value)}
+							theme={editorTheme}
+						/>
+					</div>
+				)}
 
-						<Button
-							onClick={resetEditor}
-							variant="ghost"
-							size="sm"
-							disabled={!currentTest}
-						>
-							<Undo className="h-4 w-4 mr-1" />
-							Reset
-						</Button>
+				{(!maximizedEditor || maximizedEditor === 'assertions') && (
+					<div className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}>
+						<div className="flex justify-between items-center mb-2">
+							<h2 className="mb-2">Assertions</h2>
+							<div className="flex gap-2">
+								<Button
+									onClick={() => setAssertions(currentTest?.assertions || '')}
+									variant="ghost"
+									size="sm"
+									disabled={!currentTest}
+								>
+									<Undo className="h-4 w-4 mr-1" />
+									Reset
+								</Button>
+								<Button
+									onClick={() => toggleMaximizedEditor('assertions')}
+									variant="ghost"
+									size="sm"
+								>
+									{maximizedEditor === 'assertions' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+								</Button>
+							</div>
+						</div>
+						<CodeMirror
+							value={assertions}
+							height={maximizedEditor === 'assertions' ? 'calc(100vh - 400px)' : '200px'}
+							extensions={[javascript({ jsx: true })]}
+							onChange={value => setAssertions(value)}
+							theme={editorTheme}
+						/>
+					</div>
+				)}
+
+				{/* Results and Console Output sections */}
+				<div className={maximizedEditor ? 'col-span-2 grid grid-cols-2 gap-4' : 'col-span-2 grid grid-cols-2 gap-4'}>
+					<div>
+						<div className="flex justify-between items-center mb-2">
+							<h2>Results</h2>
+							<Button
+								onClick={clearResults}
+								variant="ghost"
+								size="sm"
+							>
+								<X className="h-4 w-4 mr-1" />
+								Clear
+							</Button>
+						</div>
+						<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+							<pre>{results}</pre>
+						</div>
 					</div>
 
-					<CodeMirror
-						value={code}
-						height="200px"
-						extensions={[javascript({ jsx: true })]}
-						onChange={value => setCode(value)}
-						theme={editorTheme}
-					/>
-				</div>
-
-				<div>
-					<div className="flex justify-between items-center mb-2">
-						<h2 className="mb-2">Assertions</h2>
-
-						<Button
-							onClick={() => setAssertions(currentTest?.assertions || '')}
-							variant="ghost"
-							size="sm"
-							disabled={!currentTest}
-						>
-							<Undo className="h-4 w-4 mr-1" />
-							Reset
-						</Button>
-					</div>
-
-					<CodeMirror
-						value={assertions}
-						height="200px"
-						extensions={[javascript({ jsx: true })]}
-						onChange={value => setAssertions(value)}
-						theme={editorTheme}
-					/>
-				</div>
-
-				<div>
-					<div className="flex justify-between items-center mb-2">
-						<h2>Results</h2>
-
-						<Button
-							onClick={clearResults}
-							variant="ghost"
-							size="sm"
-						>
-							<X className="h-4 w-4 mr-1" />
-							Clear
-						</Button>
-					</div>
-
-					<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
-						<pre>{results}</pre>
-					</div>
-				</div>
-
-				<div>
-					<div className="flex justify-between items-center mb-2">
-						<h2>Console Output</h2>
-
-						<Button
-							onClick={clearConsoleOutput}
-							variant="ghost"
-							size="sm"
-						>
-							<X className="h-4 w-4 mr-1" />
-							Clear
-						</Button>
-					</div>
-
-					<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
-						<pre>{consoleOutput}</pre>
+					<div>
+						<div className="flex justify-between items-center mb-2">
+							<h2>Console Output</h2>
+							<Button
+								onClick={clearConsoleOutput}
+								variant="ghost"
+								size="sm"
+							>
+								<X className="h-4 w-4 mr-1" />
+								Clear
+							</Button>
+						</div>
+						<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
+							<pre>{consoleOutput}</pre>
+						</div>
 					</div>
 				</div>
 			</div>
