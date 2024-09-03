@@ -268,16 +268,21 @@ export function App() {
 	const assertionsEditorRef = useRef<HTMLDivElement>(null);
 
 	const handleKeyDown = useCallback((event: KeyboardEvent) => {
-		if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
-			event.preventDefault();
-			const activeElement = document.activeElement;
-			if (codeEditorRef.current?.contains(activeElement)) {
-				toggleMaximizedEditor('code');
-			} else if (assertionsEditorRef.current?.contains(activeElement)) {
-				toggleMaximizedEditor('assertions');
+		if (event.metaKey || event.ctrlKey) {
+			if (event.key === 'm') {
+				event.preventDefault();
+				const activeElement = document.activeElement;
+				if (codeEditorRef.current?.contains(activeElement)) {
+					toggleMaximizedEditor('code');
+				} else if (assertionsEditorRef.current?.contains(activeElement)) {
+					toggleMaximizedEditor('assertions');
+				}
 			}
+		} else if (event.key === 'Escape' && maximizedEditor) {
+			event.preventDefault();
+			setMaximizedEditor(null);
 		}
-	}, [toggleMaximizedEditor]);
+	}, [toggleMaximizedEditor, maximizedEditor]);
 
 	useEffect(() => {
 		document.addEventListener('keydown', handleKeyDown);
