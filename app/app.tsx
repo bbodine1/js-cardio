@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { Button } from '@/components/ui/button'
@@ -264,6 +264,28 @@ export function App() {
 		setMaximizedEditor(prev => prev === editor ? null : editor);
 	};
 
+	const codeEditorRef = useRef<HTMLDivElement>(null);
+	const assertionsEditorRef = useRef<HTMLDivElement>(null);
+
+	const handleKeyDown = useCallback((event: KeyboardEvent) => {
+		if ((event.metaKey || event.ctrlKey) && event.key === 'm') {
+			event.preventDefault();
+			const activeElement = document.activeElement;
+			if (codeEditorRef.current?.contains(activeElement)) {
+				toggleMaximizedEditor('code');
+			} else if (assertionsEditorRef.current?.contains(activeElement)) {
+				toggleMaximizedEditor('assertions');
+			}
+		}
+	}, [toggleMaximizedEditor]);
+
+	useEffect(() => {
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, [handleKeyDown]);
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<div className="flex justify-between items-center mb-4">
@@ -335,7 +357,7 @@ export function App() {
 
 			<div className={`grid ${maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
 				{(!maximizedEditor || maximizedEditor === 'code') && (
-					<div className={maximizedEditor === 'code' ? 'col-span-2' : ''}>
+					<div ref={codeEditorRef} className={maximizedEditor === 'code' ? 'col-span-2' : ''}>
 						<div className="flex justify-between items-center mb-2">
 							<h2 className="mb-2">Code Editor</h2>
 							<div className="flex gap-2">
@@ -368,7 +390,7 @@ export function App() {
 				)}
 
 				{(!maximizedEditor || maximizedEditor === 'assertions') && (
-					<div className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}>
+					<div ref={assertionsEditorRef} className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}>
 						<div className="flex justify-between items-center mb-2">
 							<h2 className="mb-2">Assertions</h2>
 							<div className="flex gap-2">
