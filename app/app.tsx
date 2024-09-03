@@ -14,6 +14,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip"
 import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo, Maximize2, Minimize2 } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
@@ -465,14 +471,23 @@ export function App() {
 				</div>
 			</div>
 
-			<Button
-				onClick={runCode}
-				className="mt-4"
-				variant={theme === 'dark' ? 'ghost' : 'default'}
-			>
-				<Play className="h-4 w-4 mr-2" />
-				Run Code
-			</Button>
+			<TooltipProvider>
+				<Tooltip>
+					<TooltipTrigger asChild>
+						<Button
+							onClick={runCode}
+							className="mt-4"
+							variant={theme === 'dark' ? 'ghost' : 'default'}
+						>
+							<Play className="h-4 w-4 mr-2" />
+							Run Code
+						</Button>
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>Run Code (⌘S or Ctrl+S)</p>
+					</TooltipContent>
+				</Tooltip>
+			</TooltipProvider>
 
 			<Dialog open={dialogState.isOpen} onOpenChange={(isOpen) => setDialogState(prev => ({ ...prev, isOpen }))}>
 				<DialogContent>
