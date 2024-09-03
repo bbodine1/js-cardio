@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/dialog'
 import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
-import { DEFAULT_TESTS } from './DEFAULT_TESTS'
+import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
 
 type Test = {
 	id: string
