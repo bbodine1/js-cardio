@@ -60,6 +60,7 @@ export function App() {
 		onSave: () => {},
 	})
 	const [isShortcutsDialogOpen, setIsShortcutsDialogOpen] = useState(false);
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
 	const [tests, setTests] = useState<Test[]>(() => {
 		if (typeof window !== 'undefined') {
@@ -238,14 +239,19 @@ export function App() {
 		}
 	}
 
-	const deleteCurrentTest = () => {
+	const handleDeleteClick = () => {
+		setIsDeleteDialogOpen(true);
+	};
+
+	const confirmDelete = () => {
 		if (currentTest) {
-			setTests(prevTests => prevTests.filter(test => test.id !== currentTest.id))
-			setCurrentTest(null)
-			setCode('// Write your JavaScript code here')
-			setAssertions('// Write your assertions here')
+			setTests(prevTests => prevTests.filter(test => test.id !== currentTest.id));
+			setCurrentTest(null);
+			setCode('// Write your JavaScript code here');
+			setAssertions('// Write your assertions here');
 		}
-	}
+		setIsDeleteDialogOpen(false);
+	};
 
 	const resetEditor = useCallback(() => {
 		if (currentTest) {
@@ -334,6 +340,27 @@ export function App() {
 		</Dialog>
 	);
 
+	const DeleteConfirmationDialog = () => (
+		<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Confirm Deletion</DialogTitle>
+					<DialogDescription>
+						Are you sure you want to delete this test? This action cannot be undone.
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+						Cancel
+					</Button>
+					<Button variant="destructive" onClick={confirmDelete}>
+						Delete
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<div className="flex justify-between items-center mb-4">
@@ -393,7 +420,7 @@ export function App() {
 						Edit
 					</Button>
 					<Button
-						onClick={deleteCurrentTest}
+						onClick={handleDeleteClick}
 						disabled={!currentTest}
 						variant="destructive"
 					>
@@ -564,6 +591,7 @@ export function App() {
 			</Dialog>
 
 			<ShortcutsDialog />
+			<DeleteConfirmationDialog />
 		</div>
 	)
 }
