@@ -283,6 +283,7 @@ export function App() {
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<div className="flex justify-between items-center mb-4">
 				<h1 className="text-2xl font-bold">JavaScript Cardio</h1>
+
 				<Button
 					onClick={toggleTheme}
 					variant={theme === 'dark' ? 'ghost' : 'default'}
@@ -291,6 +292,7 @@ export function App() {
 					{theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
 				</Button>
 			</div>
+
 			<div className="flex justify-between items-center mb-4">
 				<Select
 					onValueChange={selectTest}
@@ -310,6 +312,7 @@ export function App() {
 						))}
 					</SelectContent>
 				</Select>
+
 				<div className="flex gap-2">
 					<Dialog>
 						<DialogTrigger asChild>
@@ -359,6 +362,7 @@ export function App() {
 					</Button>
 				</div>
 			</div>
+
 			<div className="grid grid-cols-2 gap-4">
 				<div>
 					<div className="flex justify-between items-center mb-2">
@@ -383,6 +387,7 @@ export function App() {
 						theme={editorTheme}
 					/>
 				</div>
+
 				<div>
 					<div className="flex justify-between items-center mb-2">
 						<h2 className="mb-2">Assertions</h2>
@@ -406,9 +411,11 @@ export function App() {
 						theme={editorTheme}
 					/>
 				</div>
+
 				<div>
 					<div className="flex justify-between items-center mb-2">
 						<h2>Results</h2>
+
 						<Button
 							onClick={clearResults}
 							variant="ghost"
@@ -418,13 +425,16 @@ export function App() {
 							Clear
 						</Button>
 					</div>
+
 					<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
 						<pre>{results}</pre>
 					</div>
 				</div>
+
 				<div>
 					<div className="flex justify-between items-center mb-2">
 						<h2>Console Output</h2>
+
 						<Button
 							onClick={clearConsoleOutput}
 							variant="ghost"
@@ -434,11 +444,13 @@ export function App() {
 							Clear
 						</Button>
 					</div>
+
 					<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
 						<pre>{consoleOutput}</pre>
 					</div>
 				</div>
 			</div>
+
 			<Button
 				onClick={runCode}
 				className="mt-4"
@@ -447,6 +459,7 @@ export function App() {
 				<Play className="h-4 w-4 mr-2" />
 				Run Code
 			</Button>
+
 			<Dialog
 				open={isEditDialogOpen}
 				onOpenChange={setIsEditDialogOpen}
