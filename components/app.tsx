@@ -282,7 +282,7 @@ export function App() {
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<div className="flex justify-between items-center mb-4">
-				<h1 className="text-2xl font-bold">JavaScript Practice Platform</h1>
+				<h1 className="text-2xl font-bold">JavaScript Cardio</h1>
 				<Button
 					onClick={toggleTheme}
 					variant={theme === 'dark' ? 'ghost' : 'default'}
