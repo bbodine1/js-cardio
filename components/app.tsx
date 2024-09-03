@@ -375,7 +375,20 @@ export function App() {
 					/>
 				</div>
 				<div>
-					<h2 className="mb-2">Assertions</h2>
+					<div className="flex justify-between items-center mb-2">
+						<h2 className="mb-2">Assertions</h2>
+
+						<Button
+							onClick={() => setAssertions(currentTest?.assertions || '')}
+							variant="ghost"
+							size="sm"
+							disabled={!currentTest}
+						>
+							<Undo className="h-4 w-4 mr-1" />
+							Reset
+						</Button>
+					</div>
+
 					<CodeMirror
 						value={assertions}
 						height="200px"
