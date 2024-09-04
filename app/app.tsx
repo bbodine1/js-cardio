@@ -21,6 +21,7 @@ import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
 import { cn } from "@/lib/utils"
 import { ShortcutsDialog } from '@/components/shortcuts-dialog'
 import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
+import { Header } from '@/components/header'
 
 type Test = {
 	id: string
@@ -426,21 +427,7 @@ export function App() {
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-			<header>
-				<div className="flex justify-between items-center mb-4">
-					<h1 className="text-2xl font-bold">JavaScript Cardio</h1>
-
-					<Button
-						onClick={toggleTheme}
-						variant={theme === 'dark' ? 'ghost' : 'default'}
-						size="icon"
-						aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-						data-testid="theme-toggle-btn"
-					>
-						{theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
-					</Button>
-				</div>
-			</header>
+			<Header theme={theme} toggleTheme={toggleTheme} />
 
 			<main>
 				<div className="flex justify-between items-center mb-4">
