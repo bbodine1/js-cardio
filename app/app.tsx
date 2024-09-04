@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo, Maximize2, Minimize2 } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
+import { cn } from "@/lib/utils"
 
 type Test = {
 	id: string
@@ -371,7 +372,7 @@ export function App() {
 			open={isShortcutsDialogOpen}
 			onOpenChange={setIsShortcutsDialogOpen}
 		>
-			<DialogContent className="sm:max-w-[600px]">
+			<DialogContent className={cn("sm:max-w-[600px]", theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black')}>
 				<DialogHeader>
 					<DialogTitle>Keyboard Shortcuts</DialogTitle>
 					<DialogDescription>Here are all the available keyboard shortcuts:</DialogDescription>
@@ -401,7 +402,7 @@ export function App() {
 			open={isDeleteDialogOpen}
 			onOpenChange={setIsDeleteDialogOpen}
 		>
-			<DialogContent>
+			<DialogContent className={theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}>
 				<DialogHeader>
 					<DialogTitle>Confirm Deletion</DialogTitle>
 					<DialogDescription>
@@ -431,7 +432,7 @@ export function App() {
 			open={isSaveDialogOpen}
 			onOpenChange={setIsSaveDialogOpen}
 		>
-			<DialogContent>
+			<DialogContent className={theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}>
 				<DialogHeader>
 					<DialogTitle>Unsaved Changes</DialogTitle>
 					<DialogDescription>
@@ -773,7 +774,7 @@ export function App() {
 				open={dialogState.isOpen}
 				onOpenChange={isOpen => setDialogState(prev => ({ ...prev, isOpen }))}
 			>
-				<DialogContent>
+				<DialogContent className={theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}>
 					<DialogHeader>
 						<DialogTitle>{dialogState.title}</DialogTitle>
 						<DialogDescription>{dialogState.description}</DialogDescription>
