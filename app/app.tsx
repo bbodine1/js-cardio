@@ -20,6 +20,7 @@ import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
 import { cn } from "@/lib/utils"
 import { ShortcutsDialog } from '@/components/shortcuts-dialog'
+import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
 
 type Test = {
 	id: string
@@ -367,36 +368,6 @@ export function App() {
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [handleKeyDown])
-
-	const DeleteConfirmationDialog = () => (
-		<Dialog
-			open={isDeleteDialogOpen}
-			onOpenChange={setIsDeleteDialogOpen}
-		>
-			<DialogContent className={theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}>
-				<DialogHeader>
-					<DialogTitle>Confirm Deletion</DialogTitle>
-					<DialogDescription>
-						Are you sure you want to delete this test? This action cannot be undone.
-					</DialogDescription>
-				</DialogHeader>
-				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => setIsDeleteDialogOpen(false)}
-					>
-						Cancel
-					</Button>
-					<Button
-						variant="destructive"
-						onClick={confirmDelete}
-					>
-						Delete
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
-	)
 
 	const SaveConfirmationDialog = () => (
 		<Dialog
@@ -769,7 +740,12 @@ export function App() {
 				onOpenChange={setIsShortcutsDialogOpen}
 				theme={theme}
 			/>
-			<DeleteConfirmationDialog />
+			<DeleteConfirmationDialog
+				isOpen={isDeleteDialogOpen}
+				onOpenChange={setIsDeleteDialogOpen}
+				onConfirm={confirmDelete}
+				theme={theme}
+			/>
 			<SaveConfirmationDialog />
 		</div>
 	)
