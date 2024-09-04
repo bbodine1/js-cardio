@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { cn } from "@/lib/utils"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,7 +16,7 @@ export default function RootLayout({
 	children: React.ReactNode
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<head>
 				<style>{`
           body {
@@ -46,7 +47,13 @@ export default function RootLayout({
           }
         `}</style>
 			</head>
-			<body className={inter.className}>
+			<body
+				className={cn(
+					"min-h-screen bg-background font-sans antialiased",
+					// Add any other classes you need
+				)}
+				suppressHydrationWarning
+			>
 				<div
 					id="loading-screen"
 					className="loading-screen"
