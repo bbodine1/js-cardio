@@ -37,7 +37,7 @@ export function App() {
 	)
 	const [results, setResults] = useState('')
 	const [consoleOutput, setConsoleOutput] = useState('')
-	const [theme, setTheme] = useState('light')
+	const [theme, setTheme] = useState<'light' | 'dark'>('light')
 	const [currentTest, setCurrentTest] = useState<Test | null>(null)
 	const [dialogState, setDialogState] = useState<{
 		isOpen: boolean
@@ -171,9 +171,13 @@ export function App() {
 		}
 	}, [runCode])
 
-	const toggleTheme = () => {
+	const toggleTheme = useCallback(() => {
 		setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'))
-	}
+	}, [])
+
+	useEffect(() => {
+		document.documentElement.setAttribute('data-theme', theme)
+	}, [theme])
 
 	const clearResults = () => {
 		setResults('')
@@ -321,9 +325,9 @@ export function App() {
 
 	const [maximizedEditor, setMaximizedEditor] = useState<'code' | 'assertions' | null>(null)
 
-	const toggleMaximizedEditor = (editor: 'code' | 'assertions') => {
+	const toggleMaximizedEditor = useCallback((editor: 'code' | 'assertions') => {
 		setMaximizedEditor(prev => (prev === editor ? null : editor))
-	}
+	}, [])
 
 	const codeEditorRef = useRef<HTMLDivElement>(null)
 	const assertionsEditorRef = useRef<HTMLDivElement>(null)
@@ -486,6 +490,8 @@ export function App() {
 					onClick={toggleTheme}
 					variant={theme === 'dark' ? 'ghost' : 'default'}
 					size="icon"
+					aria-label="Toggle theme"
+					data-testid="theme-toggle-btn"
 				>
 					{theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
 				</Button>
