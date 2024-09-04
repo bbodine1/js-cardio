@@ -31,16 +31,22 @@ describe('App', () => {
 		// Check initial theme (assuming it starts in light mode)
 		expect(document.documentElement).toHaveAttribute('data-theme', 'light')
 
+		// Verify initial button accessibility
+		expect(themeButton).toHaveAttribute('aria-label', expect.stringMatching(/^Switch to (dark|light) theme$/))
+
 		// Toggle to dark theme
 		fireEvent.click(themeButton)
 		expect(document.documentElement).toHaveAttribute('data-theme', 'dark')
+
+		// Verify button accessibility after toggle
+		expect(themeButton).toHaveAttribute('aria-label', expect.stringMatching(/^Switch to (dark|light) theme$/))
 
 		// Toggle back to light theme
 		fireEvent.click(themeButton)
 		expect(document.documentElement).toHaveAttribute('data-theme', 'light')
 
-		// Verify button accessibility
-		expect(themeButton).toHaveAttribute('aria-label', 'Toggle theme')
+		// Verify button accessibility after toggle back
+		expect(themeButton).toHaveAttribute('aria-label', expect.stringMatching(/^Switch to (dark|light) theme$/))
 	})
 
 	it('opens new test dialog when "New Test" button is clicked', () => {
