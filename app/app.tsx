@@ -14,12 +14,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/dialog'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo, Maximize2, Minimize2 } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
@@ -59,11 +54,11 @@ export function App() {
 		inputValue: '',
 		onSave: () => {},
 	})
-	const [isShortcutsDialogOpen, setIsShortcutsDialogOpen] = useState(false);
-	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-	const [pendingTestSelection, setPendingTestSelection] = useState<string | 'new' | null>(null);
-	const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+	const [isShortcutsDialogOpen, setIsShortcutsDialogOpen] = useState(false)
+	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
+	const [pendingTestSelection, setPendingTestSelection] = useState<string | 'new' | null>(null)
+	const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false)
 
 	const [tests, setTests] = useState<Test[]>(() => {
 		if (typeof window !== 'undefined') {
@@ -192,12 +187,12 @@ export function App() {
 
 	const openNewTestDialog = () => {
 		if (hasUnsavedChanges) {
-			setPendingTestSelection('new');
-			setIsSaveDialogOpen(true);
+			setPendingTestSelection('new')
+			setIsSaveDialogOpen(true)
 		} else {
-			openNewTestDialogDirectly();
+			openNewTestDialogDirectly()
 		}
-	};
+	}
 
 	const openNewTestDialogDirectly = () => {
 		setDialogState({
@@ -219,7 +214,7 @@ export function App() {
 					setCode(newTest.code)
 					setAssertions(newTest.assertions)
 					setDialogState(prev => ({ ...prev, isOpen: false }))
-					setHasUnsavedChanges(false);
+					setHasUnsavedChanges(false)
 				}
 			},
 		})
@@ -238,7 +233,7 @@ export function App() {
 						test.id === currentTest.id ? { ...currentTest, name: dialogState.inputValue } : test
 					)
 					setTests(updatedTests)
-					setCurrentTest(prev => prev ? { ...prev, name: dialogState.inputValue } : null)
+					setCurrentTest(prev => (prev ? { ...prev, name: dialogState.inputValue } : null))
 					setDialogState(prev => ({ ...prev, isOpen: false }))
 				},
 			})
@@ -249,46 +244,46 @@ export function App() {
 		if (currentTest) {
 			setTests(prevTests => prevTests.map(test => (test.id === currentTest.id ? { ...test, code, assertions } : test)))
 			setCurrentTest({ ...currentTest, code, assertions })
-			setHasUnsavedChanges(false);
+			setHasUnsavedChanges(false)
 		}
 	}
 
 	const handleDeleteClick = () => {
-		setIsDeleteDialogOpen(true);
-	};
+		setIsDeleteDialogOpen(true)
+	}
 
 	const confirmDelete = () => {
 		if (currentTest) {
 			setTests(prevTests => {
-				const updatedTests = prevTests.filter(test => test.id !== currentTest.id);
-				
+				const updatedTests = prevTests.filter(test => test.id !== currentTest.id)
+
 				// Select the first available test or set to null if no tests remain
-				const nextTest = updatedTests.length > 0 ? updatedTests[0] : null;
-				
+				const nextTest = updatedTests.length > 0 ? updatedTests[0] : null
+
 				if (nextTest) {
-					setCurrentTest(nextTest);
-					setCode(nextTest.code);
-					setAssertions(nextTest.assertions);
+					setCurrentTest(nextTest)
+					setCode(nextTest.code)
+					setAssertions(nextTest.assertions)
 				} else {
 					// If no tests remain, set to default test
 					const defaultTest: Test = {
 						id: 'default',
 						name: 'Default Test',
 						code: '// Write your JavaScript code here\nfunction sum(a, b) {\n  return a + b;\n}\n\nconsole.log(sum(1, 2));',
-						assertions: '// Write your assertions here\nassert(sum(1, 2) === 3);\nassert(sum(-1, 1) === 0);'
-					};
-					setTests([defaultTest]);
-					setCurrentTest(defaultTest);
-					setCode(defaultTest.code);
-					setAssertions(defaultTest.assertions);
+						assertions: '// Write your assertions here\nassert(sum(1, 2) === 3);\nassert(sum(-1, 1) === 0);',
+					}
+					setTests([defaultTest])
+					setCurrentTest(defaultTest)
+					setCode(defaultTest.code)
+					setAssertions(defaultTest.assertions)
 				}
-				
-				setHasUnsavedChanges(false);
-				return updatedTests;
-			});
+
+				setHasUnsavedChanges(false)
+				return updatedTests
+			})
 		}
-		setIsDeleteDialogOpen(false);
-	};
+		setIsDeleteDialogOpen(false)
+	}
 
 	const resetEditor = useCallback(() => {
 		if (currentTest) {
@@ -299,73 +294,77 @@ export function App() {
 
 	const handleTestSelection = (testId: string) => {
 		if (hasUnsavedChanges) {
-			setPendingTestSelection(testId);
-			setIsSaveDialogOpen(true);
+			setPendingTestSelection(testId)
+			setIsSaveDialogOpen(true)
 		} else {
-			selectTest(testId);
+			selectTest(testId)
 		}
-	};
+	}
 
 	const selectTest = (testId: string) => {
-		const selected = tests.find(test => test.id === testId);
+		const selected = tests.find(test => test.id === testId)
 		if (selected) {
-			setCurrentTest(selected);
-			setCode(selected.code);
-			setAssertions(selected.assertions);
-			setHasUnsavedChanges(false);
+			setCurrentTest(selected)
+			setCode(selected.code)
+			setAssertions(selected.assertions)
+			setHasUnsavedChanges(false)
 		}
-	};
+	}
 
 	const editorTheme = theme === 'dark' ? vscodeDarkTheme : vscodeLightTheme
 
-	const [maximizedEditor, setMaximizedEditor] = useState<'code' | 'assertions' | null>(null);
+	const [maximizedEditor, setMaximizedEditor] = useState<'code' | 'assertions' | null>(null)
 
 	const toggleMaximizedEditor = (editor: 'code' | 'assertions') => {
-		setMaximizedEditor(prev => prev === editor ? null : editor);
-	};
+		setMaximizedEditor(prev => (prev === editor ? null : editor))
+	}
 
-	const codeEditorRef = useRef<HTMLDivElement>(null);
-	const assertionsEditorRef = useRef<HTMLDivElement>(null);
+	const codeEditorRef = useRef<HTMLDivElement>(null)
+	const assertionsEditorRef = useRef<HTMLDivElement>(null)
 
-	const handleKeyDown = useCallback((event: KeyboardEvent) => {
-		if (event.metaKey || event.ctrlKey) {
-			if (event.key === 'm') {
-				event.preventDefault();
-				const activeElement = document.activeElement;
-				if (codeEditorRef.current?.contains(activeElement)) {
-					toggleMaximizedEditor('code');
-				} else if (assertionsEditorRef.current?.contains(activeElement)) {
-					toggleMaximizedEditor('assertions');
+	const handleKeyDown = useCallback(
+		(event: KeyboardEvent) => {
+			if (event.metaKey || event.ctrlKey) {
+				if (event.key === 'm') {
+					event.preventDefault()
+					const activeElement = document.activeElement
+					if (codeEditorRef.current?.contains(activeElement)) {
+						toggleMaximizedEditor('code')
+					} else if (assertionsEditorRef.current?.contains(activeElement)) {
+						toggleMaximizedEditor('assertions')
+					}
+				} else if (event.key === '/') {
+					event.preventDefault()
+					setIsShortcutsDialogOpen(prev => !prev)
 				}
-			} else if (event.key === '/') {
-				event.preventDefault();
-				setIsShortcutsDialogOpen(prev => !prev);
+			} else if (event.key === 'Escape') {
+				if (maximizedEditor) {
+					event.preventDefault()
+					setMaximizedEditor(null)
+				} else if (isShortcutsDialogOpen) {
+					setIsShortcutsDialogOpen(false)
+				}
 			}
-		} else if (event.key === 'Escape') {
-			if (maximizedEditor) {
-				event.preventDefault();
-				setMaximizedEditor(null);
-			} else if (isShortcutsDialogOpen) {
-				setIsShortcutsDialogOpen(false);
-			}
-		}
-	}, [toggleMaximizedEditor, maximizedEditor, isShortcutsDialogOpen]);
+		},
+		[toggleMaximizedEditor, maximizedEditor, isShortcutsDialogOpen]
+	)
 
 	useEffect(() => {
-		document.addEventListener('keydown', handleKeyDown);
+		document.addEventListener('keydown', handleKeyDown)
 		return () => {
-			document.removeEventListener('keydown', handleKeyDown);
-		};
-	}, [handleKeyDown]);
+			document.removeEventListener('keydown', handleKeyDown)
+		}
+	}, [handleKeyDown])
 
 	const ShortcutsDialog = () => (
-		<Dialog open={isShortcutsDialogOpen} onOpenChange={setIsShortcutsDialogOpen}>
+		<Dialog
+			open={isShortcutsDialogOpen}
+			onOpenChange={setIsShortcutsDialogOpen}
+		>
 			<DialogContent className="sm:max-w-[600px]">
 				<DialogHeader>
 					<DialogTitle>Keyboard Shortcuts</DialogTitle>
-					<DialogDescription>
-						Here are all the available keyboard shortcuts:
-					</DialogDescription>
+					<DialogDescription>Here are all the available keyboard shortcuts:</DialogDescription>
 				</DialogHeader>
 				<div className="grid grid-cols-2 gap-4">
 					<div>
@@ -385,10 +384,13 @@ export function App() {
 				</div>
 			</DialogContent>
 		</Dialog>
-	);
+	)
 
 	const DeleteConfirmationDialog = () => (
-		<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+		<Dialog
+			open={isDeleteDialogOpen}
+			onOpenChange={setIsDeleteDialogOpen}
+		>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Confirm Deletion</DialogTitle>
@@ -397,62 +399,77 @@ export function App() {
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+					<Button
+						variant="outline"
+						onClick={() => setIsDeleteDialogOpen(false)}
+					>
 						Cancel
 					</Button>
-					<Button variant="destructive" onClick={confirmDelete}>
+					<Button
+						variant="destructive"
+						onClick={confirmDelete}
+					>
 						Delete
 					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
-	);
+	)
 
 	const SaveConfirmationDialog = () => (
-		<Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+		<Dialog
+			open={isSaveDialogOpen}
+			onOpenChange={setIsSaveDialogOpen}
+		>
 			<DialogContent>
 				<DialogHeader>
 					<DialogTitle>Unsaved Changes</DialogTitle>
 					<DialogDescription>
-						You have unsaved changes. Do you want to save them before {pendingTestSelection === 'new' ? 'creating a new test' : 'switching tests'}?
+						You have unsaved changes. Do you want to save them before{' '}
+						{pendingTestSelection === 'new' ? 'creating a new test' : 'switching tests'}?
 					</DialogDescription>
 				</DialogHeader>
 				<DialogFooter>
-					<Button variant="outline" onClick={() => {
-						setIsSaveDialogOpen(false);
-						if (pendingTestSelection === 'new') {
-							openNewTestDialogDirectly();
-						} else if (pendingTestSelection) {
-							selectTest(pendingTestSelection);
-						}
-					}}>
-						Don't Save
+					<Button
+						variant="outline"
+						onClick={() => {
+							setIsSaveDialogOpen(false)
+							if (pendingTestSelection === 'new') {
+								openNewTestDialogDirectly()
+							} else if (pendingTestSelection) {
+								selectTest(pendingTestSelection)
+							}
+						}}
+					>
+						Don&apos;t Save
 					</Button>
-					<Button onClick={() => {
-						saveCurrentTest();
-						setIsSaveDialogOpen(false);
-						if (pendingTestSelection === 'new') {
-							openNewTestDialogDirectly();
-						} else if (pendingTestSelection) {
-							selectTest(pendingTestSelection);
-						}
-					}}>
+					<Button
+						onClick={() => {
+							saveCurrentTest()
+							setIsSaveDialogOpen(false)
+							if (pendingTestSelection === 'new') {
+								openNewTestDialogDirectly()
+							} else if (pendingTestSelection) {
+								selectTest(pendingTestSelection)
+							}
+						}}
+					>
 						Save
 					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>
-	);
+	)
 
 	const handleCodeChange = (value: string) => {
-		setCode(value);
-		setHasUnsavedChanges(true);
-	};
+		setCode(value)
+		setHasUnsavedChanges(true)
+	}
 
 	const handleAssertionsChange = (value: string) => {
-		setAssertions(value);
-		setHasUnsavedChanges(true);
-	};
+		setAssertions(value)
+		setHasUnsavedChanges(true)
+	}
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
@@ -489,8 +506,8 @@ export function App() {
 				</Select>
 
 				<div className="flex gap-2">
-					<Button 
-						variant={theme === 'dark' ? 'ghost' : 'default'} 
+					<Button
+						variant={theme === 'dark' ? 'ghost' : 'default'}
 						onClick={openNewTestDialog}
 					>
 						<Plus className="h-4 w-4 mr-2" />
@@ -525,7 +542,10 @@ export function App() {
 
 			<div className={`grid ${maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
 				{(!maximizedEditor || maximizedEditor === 'code') && (
-					<div ref={codeEditorRef} className={maximizedEditor === 'code' ? 'col-span-2' : ''}>
+					<div
+						ref={codeEditorRef}
+						className={maximizedEditor === 'code' ? 'col-span-2' : ''}
+					>
 						<div className="flex justify-between items-center mb-2">
 							<h2 className="mb-2">Code Editor</h2>
 							<div className="flex gap-2">
@@ -546,7 +566,11 @@ export function App() {
 												variant="ghost"
 												size="sm"
 											>
-												{maximizedEditor === 'code' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+												{maximizedEditor === 'code' ? (
+													<Minimize2 className="h-4 w-4" />
+												) : (
+													<Maximize2 className="h-4 w-4" />
+												)}
 											</Button>
 										</TooltipTrigger>
 										<TooltipContent>
@@ -567,7 +591,10 @@ export function App() {
 				)}
 
 				{(!maximizedEditor || maximizedEditor === 'assertions') && (
-					<div ref={assertionsEditorRef} className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}>
+					<div
+						ref={assertionsEditorRef}
+						className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}
+					>
 						<div className="flex justify-between items-center mb-2">
 							<h2 className="mb-2">Assertions</h2>
 							<div className="flex gap-2">
@@ -588,7 +615,11 @@ export function App() {
 												variant="ghost"
 												size="sm"
 											>
-												{maximizedEditor === 'assertions' ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+												{maximizedEditor === 'assertions' ? (
+													<Minimize2 className="h-4 w-4" />
+												) : (
+													<Maximize2 className="h-4 w-4" />
+												)}
 											</Button>
 										</TooltipTrigger>
 										<TooltipContent>
@@ -664,7 +695,10 @@ export function App() {
 				</Tooltip>
 			</TooltipProvider>
 
-			<Dialog open={dialogState.isOpen} onOpenChange={(isOpen) => setDialogState(prev => ({ ...prev, isOpen }))}>
+			<Dialog
+				open={dialogState.isOpen}
+				onOpenChange={isOpen => setDialogState(prev => ({ ...prev, isOpen }))}
+			>
 				<DialogContent>
 					<DialogHeader>
 						<DialogTitle>{dialogState.title}</DialogTitle>
@@ -673,7 +707,7 @@ export function App() {
 
 					<Input
 						value={dialogState.inputValue}
-						onChange={(e) => setDialogState(prev => ({ ...prev, inputValue: e.target.value }))}
+						onChange={e => setDialogState(prev => ({ ...prev, inputValue: e.target.value }))}
 						placeholder="Test name"
 					/>
 
