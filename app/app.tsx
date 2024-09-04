@@ -344,11 +344,19 @@ export function App() {
 				} else if (event.key === ',') {
 					event.preventDefault()
 					const codeContent = codeEditorRef.current?.querySelector('.cm-content') as HTMLElement
-					codeContent?.focus()
+					if (document.activeElement === codeContent) {
+						codeContent.blur()
+					} else {
+						codeContent?.focus()
+					}
 				} else if (event.key === '.') {
 					event.preventDefault()
 					const assertionsContent = assertionsEditorRef.current?.querySelector('.cm-content') as HTMLElement
-					assertionsContent?.focus()
+					if (document.activeElement === assertionsContent) {
+						assertionsContent.blur()
+					} else {
+						assertionsContent?.focus()
+					}
 				}
 			} else if (event.key === 'Escape') {
 				if (maximizedEditor) {
@@ -397,6 +405,24 @@ export function App() {
 		setAssertions(value)
 		setHasUnsavedChanges(true)
 	}
+
+	const focusCodeEditor = useCallback(() => {
+		const codeContent = codeEditorRef.current?.querySelector('.cm-content') as HTMLElement
+		if (document.activeElement === codeContent) {
+			codeContent.blur()
+		} else {
+			codeContent?.focus()
+		}
+	}, [])
+
+	const focusAssertionsEditor = useCallback(() => {
+		const assertionsContent = assertionsEditorRef.current?.querySelector('.cm-content') as HTMLElement
+		if (document.activeElement === assertionsContent) {
+			assertionsContent.blur()
+		} else {
+			assertionsContent?.focus()
+		}
+	}, [])
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
@@ -490,6 +516,7 @@ export function App() {
 							editorTheme={editorTheme}
 							editorRef={codeEditorRef}
 							currentTest={currentTest}
+							onFocus={focusCodeEditor}
 						/>
 					)}
 
@@ -505,6 +532,7 @@ export function App() {
 							editorTheme={editorTheme}
 							editorRef={assertionsEditorRef}
 							currentTest={currentTest}
+							onFocus={focusAssertionsEditor}
 						/>
 					)}
 

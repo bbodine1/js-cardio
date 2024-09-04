@@ -3,7 +3,7 @@ import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { Undo, Minimize2, Maximize2 } from 'lucide-react'
+import { Undo, Minimize2, Maximize2, Focus } from 'lucide-react'
 
 interface EditorSectionProps {
   title: string
@@ -16,6 +16,7 @@ interface EditorSectionProps {
   editorTheme: any
   editorRef: React.RefObject<HTMLElement>
   currentTest: any
+  onFocus: () => void
 }
 
 export const EditorSection: React.FC<EditorSectionProps> = ({
@@ -29,6 +30,7 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
   editorTheme,
   editorRef,
   currentTest,
+  onFocus,
 }) => {
   const isMaximized = maximizedEditor === editorType
 
@@ -52,6 +54,26 @@ export const EditorSection: React.FC<EditorSectionProps> = ({
             />
             Reset
           </Button>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={onFocus}
+                  variant="ghost"
+                  size="sm"
+                  aria-label={`Focus ${title.toLowerCase()}`}
+                >
+                  <Focus
+                    className="h-4 w-4"
+                    aria-hidden="true"
+                  />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Toggle focus {editorType === 'code' ? '(⌘, or Ctrl+,)' : '(⌘. or Ctrl+.)'}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
