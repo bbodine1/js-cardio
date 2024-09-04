@@ -2,16 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from '@/components/ui/dialog'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { X, Plus, Save, Edit, Trash, Play } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
@@ -21,6 +12,7 @@ import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
 import { Header } from '@/components/header'
 import { EditorSection } from '@/components/editor-section'
 import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
+import { TestNameDialog } from '@/components/new-test-dialog'
 
 type Test = {
 	id: string
@@ -578,28 +570,17 @@ export function App() {
 				</TooltipProvider>
 			</main>
 
-			<Dialog
-				open={dialogState.isOpen}
-				onOpenChange={isOpen => setDialogState(prev => ({ ...prev, isOpen }))}
-			>
-				<DialogContent className={theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}>
-					<DialogHeader>
-						<DialogTitle>{dialogState.title}</DialogTitle>
-						<DialogDescription>{dialogState.description}</DialogDescription>
-					</DialogHeader>
-
-					<Input
-						value={dialogState.inputValue}
-						onChange={e => setDialogState(prev => ({ ...prev, inputValue: e.target.value }))}
-						onKeyDown={handleDialogKeyDown}
-						placeholder="Test name"
-					/>
-
-					<DialogFooter>
-						<Button onClick={handleDialogSave}>Save</Button>
-					</DialogFooter>
-				</DialogContent>
-			</Dialog>
+			<TestNameDialog
+				isOpen={dialogState.isOpen}
+				onOpenChange={(isOpen) => setDialogState(prev => ({ ...prev, isOpen }))}
+				title={dialogState.title}
+				description={dialogState.description}
+				inputValue={dialogState.inputValue}
+				onInputChange={(value) => setDialogState(prev => ({ ...prev, inputValue: value }))}
+				onKeyDown={handleDialogKeyDown}
+				onSave={handleDialogSave}
+				theme={theme}
+			/>
 
 			<ShortcutsDialog
 				isOpen={isShortcutsDialogOpen}
