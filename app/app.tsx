@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo, Maximize2, Minimize2 } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
+import { VisuallyHidden } from '@/components/ui/visually-hidden'
 
 type Test = {
 	id: string
@@ -483,229 +484,291 @@ export function App() {
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-			<div className="flex justify-between items-center mb-4">
-				<h1 className="text-2xl font-bold">JavaScript Cardio</h1>
+			<header>
+				<div className="flex justify-between items-center mb-4">
+					<h1 className="text-2xl font-bold">JavaScript Cardio</h1>
 
-				<Button
-					onClick={toggleTheme}
-					variant={theme === 'dark' ? 'ghost' : 'default'}
-					size="icon"
-					aria-label="Toggle theme"
-					data-testid="theme-toggle-btn"
-				>
-					{theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
-				</Button>
-			</div>
-
-			<div className="flex justify-between items-center mb-4">
-				<Select
-					onValueChange={handleTestSelection}
-					value={currentTest?.id}
-				>
-					<SelectTrigger className="w-[180px]">
-						<SelectValue placeholder="Select a test" />
-					</SelectTrigger>
-					<SelectContent>
-						{tests.map(test => (
-							<SelectItem
-								key={test.id}
-								value={test.id}
-							>
-								{test.name}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-
-				<div className="flex gap-2">
 					<Button
+						onClick={toggleTheme}
 						variant={theme === 'dark' ? 'ghost' : 'default'}
-						onClick={openNewTestDialog}
+						size="icon"
+						aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+						data-testid="theme-toggle-btn"
 					>
-						<Plus className="h-4 w-4 mr-2" />
-						New Test
-					</Button>
-					<Button
-						onClick={saveCurrentTest}
-						disabled={!currentTest}
-						variant={theme === 'dark' ? 'ghost' : 'default'}
-					>
-						<Save className="h-4 w-4 mr-2" />
-						Save
-					</Button>
-					<Button
-						onClick={openEditTestDialog}
-						disabled={!currentTest}
-						variant={theme === 'dark' ? 'ghost' : 'default'}
-					>
-						<Edit className="h-4 w-4 mr-2" />
-						Edit
-					</Button>
-					<Button
-						onClick={handleDeleteClick}
-						disabled={!currentTest}
-						variant="destructive"
-					>
-						<Trash className="h-4 w-4 mr-2" />
-						Delete
+						{theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
 					</Button>
 				</div>
-			</div>
+			</header>
 
-			<div className={`grid ${maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
-				{(!maximizedEditor || maximizedEditor === 'code') && (
-					<div
-						ref={codeEditorRef}
-						className={maximizedEditor === 'code' ? 'col-span-2' : ''}
+			<main>
+				<div className="flex justify-between items-center mb-4">
+					<Select
+						onValueChange={handleTestSelection}
+						value={currentTest?.id}
 					>
-						<div className="flex justify-between items-center mb-2">
-							<h2 className="mb-2">Code Editor</h2>
-							<div className="flex gap-2">
-								<Button
-									onClick={resetEditor}
-									variant="ghost"
-									size="sm"
-									disabled={!currentTest}
+						<SelectTrigger className="w-[180px]">
+							<SelectValue placeholder="Select a test" />
+						</SelectTrigger>
+						<SelectContent>
+							{tests.map(test => (
+								<SelectItem
+									key={test.id}
+									value={test.id}
 								>
-									<Undo className="h-4 w-4 mr-1" />
-									Reset
-								</Button>
-								<TooltipProvider>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												onClick={() => toggleMaximizedEditor('code')}
-												variant="ghost"
-												size="sm"
-											>
-												{maximizedEditor === 'code' ? (
-													<Minimize2 className="h-4 w-4" />
-												) : (
-													<Maximize2 className="h-4 w-4" />
-												)}
-											</Button>
-										</TooltipTrigger>
-										<TooltipContent>
-											<p>{maximizedEditor === 'code' ? 'Minimize (Esc)' : 'Maximize (⌘M or Ctrl+M)'}</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
-							</div>
-						</div>
-						<CodeMirror
-							value={code}
-							height={maximizedEditor === 'code' ? 'calc(100vh - 400px)' : '200px'}
-							extensions={[javascript({ jsx: true })]}
-							onChange={handleCodeChange}
-							theme={editorTheme}
-						/>
-					</div>
-				)}
+									{test.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
 
-				{(!maximizedEditor || maximizedEditor === 'assertions') && (
 					<div
-						ref={assertionsEditorRef}
-						className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}
+						className="flex gap-2"
+						role="toolbar"
+						aria-label="Test management actions"
 					>
-						<div className="flex justify-between items-center mb-2">
-							<h2 className="mb-2">Assertions</h2>
-							<div className="flex gap-2">
-								<Button
-									onClick={() => setAssertions(currentTest?.assertions || '')}
-									variant="ghost"
-									size="sm"
-									disabled={!currentTest}
-								>
-									<Undo className="h-4 w-4 mr-1" />
-									Reset
-								</Button>
-								<TooltipProvider>
-									<Tooltip>
-										<TooltipTrigger asChild>
-											<Button
-												onClick={() => toggleMaximizedEditor('assertions')}
-												variant="ghost"
-												size="sm"
-											>
-												{maximizedEditor === 'assertions' ? (
-													<Minimize2 className="h-4 w-4" />
-												) : (
-													<Maximize2 className="h-4 w-4" />
-												)}
-											</Button>
-										</TooltipTrigger>
-										<TooltipContent>
-											<p>{maximizedEditor === 'assertions' ? 'Minimize (Esc)' : 'Maximize (⌘M or Ctrl+M)'}</p>
-										</TooltipContent>
-									</Tooltip>
-								</TooltipProvider>
-							</div>
-						</div>
-						<CodeMirror
-							value={assertions}
-							height={maximizedEditor === 'assertions' ? 'calc(100vh - 400px)' : '200px'}
-							extensions={[javascript({ jsx: true })]}
-							onChange={handleAssertionsChange}
-							theme={editorTheme}
-						/>
-					</div>
-				)}
-
-				{/* Results and Console Output sections */}
-				<div className={maximizedEditor ? 'col-span-2 grid grid-cols-2 gap-4' : 'col-span-2 grid grid-cols-2 gap-4'}>
-					<div>
-						<div className="flex justify-between items-center mb-2">
-							<h2>Results</h2>
-							<Button
-								onClick={clearResults}
-								variant="ghost"
-								size="sm"
-							>
-								<X className="h-4 w-4 mr-1" />
-								Clear
-							</Button>
-						</div>
-						<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
-							<pre>{results}</pre>
-						</div>
-					</div>
-
-					<div>
-						<div className="flex justify-between items-center mb-2">
-							<h2>Console Output</h2>
-							<Button
-								onClick={clearConsoleOutput}
-								variant="ghost"
-								size="sm"
-							>
-								<X className="h-4 w-4 mr-1" />
-								Clear
-							</Button>
-						</div>
-						<div className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}>
-							<pre>{consoleOutput}</pre>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<TooltipProvider>
-				<Tooltip>
-					<TooltipTrigger asChild>
 						<Button
-							onClick={runCode}
-							className="mt-4"
+							variant={theme === 'dark' ? 'ghost' : 'default'}
+							onClick={openNewTestDialog}
+						>
+							<Plus
+								className="h-4 w-4 mr-2"
+								aria-hidden="true"
+							/>
+							New Test
+						</Button>
+						<Button
+							onClick={saveCurrentTest}
+							disabled={!currentTest}
 							variant={theme === 'dark' ? 'ghost' : 'default'}
 						>
-							<Play className="h-4 w-4 mr-2" />
-							Run Code
+							<Save
+								className="h-4 w-4 mr-2"
+								aria-hidden="true"
+							/>
+							Save
 						</Button>
-					</TooltipTrigger>
-					<TooltipContent>
-						<p>Run Code (⌘S or Ctrl+S)</p>
-					</TooltipContent>
-				</Tooltip>
-			</TooltipProvider>
+						<Button
+							onClick={openEditTestDialog}
+							disabled={!currentTest}
+							variant={theme === 'dark' ? 'ghost' : 'default'}
+						>
+							<Edit
+								className="h-4 w-4 mr-2"
+								aria-hidden="true"
+							/>
+							Edit
+						</Button>
+						<Button
+							onClick={handleDeleteClick}
+							disabled={!currentTest}
+							variant="destructive"
+						>
+							<Trash
+								className="h-4 w-4 mr-2"
+								aria-hidden="true"
+							/>
+							Delete
+						</Button>
+					</div>
+				</div>
+
+				<div className={`grid ${maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+					{(!maximizedEditor || maximizedEditor === 'code') && (
+						<section
+							ref={codeEditorRef}
+							className={maximizedEditor === 'code' ? 'col-span-2' : ''}
+						>
+							<div className="flex justify-between items-center mb-2">
+								<h2 className="mb-2">Code Editor</h2>
+								<div className="flex gap-2">
+									<Button
+										onClick={resetEditor}
+										variant="ghost"
+										size="sm"
+										disabled={!currentTest}
+									>
+										<Undo
+											className="h-4 w-4 mr-1"
+											aria-hidden="true"
+										/>
+										Reset
+									</Button>
+									<TooltipProvider>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Button
+													onClick={() => toggleMaximizedEditor('code')}
+													variant="ghost"
+													size="sm"
+													aria-label={maximizedEditor === 'code' ? 'Minimize code editor' : 'Maximize code editor'}
+												>
+													{maximizedEditor === 'code' ? (
+														<Minimize2
+															className="h-4 w-4"
+															aria-hidden="true"
+														/>
+													) : (
+														<Maximize2
+															className="h-4 w-4"
+															aria-hidden="true"
+														/>
+													)}
+												</Button>
+											</TooltipTrigger>
+											<TooltipContent>
+												<p>{maximizedEditor === 'code' ? 'Minimize (Esc)' : 'Maximize (⌘M or Ctrl+M)'}</p>
+											</TooltipContent>
+										</Tooltip>
+									</TooltipProvider>
+								</div>
+							</div>
+							<CodeMirror
+								value={code}
+								height={maximizedEditor === 'code' ? 'calc(100vh - 400px)' : '200px'}
+								extensions={[javascript({ jsx: true })]}
+								onChange={handleCodeChange}
+								theme={editorTheme}
+								aria-label="Code editor"
+							/>
+						</section>
+					)}
+
+					{(!maximizedEditor || maximizedEditor === 'assertions') && (
+						<section
+							ref={assertionsEditorRef}
+							className={maximizedEditor === 'assertions' ? 'col-span-2' : ''}
+						>
+							<div className="flex justify-between items-center mb-2">
+								<h2 className="mb-2">Assertions</h2>
+								<div className="flex gap-2">
+									<Button
+										onClick={() => setAssertions(currentTest?.assertions || '')}
+										variant="ghost"
+										size="sm"
+										disabled={!currentTest}
+									>
+										<Undo
+											className="h-4 w-4 mr-1"
+											aria-hidden="true"
+										/>
+										Reset
+									</Button>
+									<TooltipProvider>
+										<Tooltip>
+											<TooltipTrigger asChild>
+												<Button
+													onClick={() => toggleMaximizedEditor('assertions')}
+													variant="ghost"
+													size="sm"
+													aria-label={
+														maximizedEditor === 'assertions'
+															? 'Minimize assertions editor'
+															: 'Maximize assertions editor'
+													}
+												>
+													{maximizedEditor === 'assertions' ? (
+														<Minimize2
+															className="h-4 w-4"
+															aria-hidden="true"
+														/>
+													) : (
+														<Maximize2
+															className="h-4 w-4"
+															aria-hidden="true"
+														/>
+													)}
+												</Button>
+											</TooltipTrigger>
+											<TooltipContent>
+												<p>{maximizedEditor === 'assertions' ? 'Minimize (Esc)' : 'Maximize (⌘M or Ctrl+M)'}</p>
+											</TooltipContent>
+										</Tooltip>
+									</TooltipProvider>
+								</div>
+							</div>
+							<CodeMirror
+								value={assertions}
+								height={maximizedEditor === 'assertions' ? 'calc(100vh - 400px)' : '200px'}
+								extensions={[javascript({ jsx: true })]}
+								onChange={handleAssertionsChange}
+								theme={editorTheme}
+								aria-label="Assertions editor"
+							/>
+						</section>
+					)}
+
+					<div className={maximizedEditor ? 'col-span-2 grid grid-cols-2 gap-4' : 'col-span-2 grid grid-cols-2 gap-4'}>
+						<section>
+							<div className="flex justify-between items-center mb-2">
+								<h2>Results</h2>
+								<Button
+									onClick={clearResults}
+									variant="ghost"
+									size="sm"
+								>
+									<X
+										className="h-4 w-4 mr-1"
+										aria-hidden="true"
+									/>
+									Clear
+								</Button>
+							</div>
+							<div
+								className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
+								role="region"
+								aria-label="Test results"
+							>
+								<pre>{results}</pre>
+							</div>
+						</section>
+
+						<section>
+							<div className="flex justify-between items-center mb-2">
+								<h2>Console Output</h2>
+								<Button
+									onClick={clearConsoleOutput}
+									variant="ghost"
+									size="sm"
+								>
+									<X
+										className="h-4 w-4 mr-1"
+										aria-hidden="true"
+									/>
+									Clear
+								</Button>
+							</div>
+							<div
+								className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
+								role="region"
+								aria-label="Console output"
+							>
+								<pre>{consoleOutput}</pre>
+							</div>
+						</section>
+					</div>
+				</div>
+
+				<TooltipProvider>
+					<Tooltip>
+						<TooltipTrigger asChild>
+							<Button
+								onClick={runCode}
+								className="mt-4"
+								variant={theme === 'dark' ? 'ghost' : 'default'}
+							>
+								<Play
+									className="h-4 w-4 mr-2"
+									aria-hidden="true"
+								/>
+								Run Code
+							</Button>
+						</TooltipTrigger>
+						<TooltipContent>
+							<p>Run Code (⌘S or Ctrl+S)</p>
+						</TooltipContent>
+					</Tooltip>
+				</TooltipProvider>
+			</main>
 
 			<Dialog
 				open={dialogState.isOpen}
