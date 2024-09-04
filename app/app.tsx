@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { X, Plus, Save, Edit, Trash, Play } from 'lucide-react'
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
-import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
+import { DEFAULT_TESTS } from './DEFAULT_TESTS'
 import { ShortcutsDialog } from '@/components/shortcuts-dialog'
 import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
 import { Header } from '@/components/header'
