@@ -430,6 +430,7 @@ export function App() {
 							/>
 							New Test
 						</Button>
+
 						<Button
 							onClick={saveCurrentTest}
 							disabled={!currentTest}
@@ -441,6 +442,7 @@ export function App() {
 							/>
 							Save
 						</Button>
+
 						<Button
 							onClick={openEditTestDialog}
 							disabled={!currentTest}
@@ -452,6 +454,7 @@ export function App() {
 							/>
 							Edit
 						</Button>
+
 						<Button
 							onClick={handleDeleteClick}
 							disabled={!currentTest}
@@ -513,6 +516,7 @@ export function App() {
 									Clear
 								</Button>
 							</div>
+
 							<div
 								className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
 								role="region"
@@ -537,6 +541,7 @@ export function App() {
 									Clear
 								</Button>
 							</div>
+
 							<div
 								className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
 								role="region"
@@ -563,6 +568,7 @@ export function App() {
 								Run Code
 							</Button>
 						</TooltipTrigger>
+
 						<TooltipContent>
 							<p>Run Code (⌘S or Ctrl+S)</p>
 						</TooltipContent>
@@ -587,12 +593,14 @@ export function App() {
 				onOpenChange={setIsShortcutsDialogOpen}
 				theme={theme}
 			/>
+
 			<DeleteConfirmationDialog
 				isOpen={isDeleteDialogOpen}
 				onOpenChange={setIsDeleteDialogOpen}
 				onConfirm={confirmDelete}
 				theme={theme}
 			/>
+
 			<SaveConfirmationDialog
 				isOpen={isSaveDialogOpen}
 				onOpenChange={setIsSaveDialogOpen}
