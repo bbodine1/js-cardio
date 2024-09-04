@@ -35,8 +35,9 @@ export const DeleteConfirmationDialog: React.FC<DeleteConfirmationDialogProps> =
       </DialogHeader>
       <DialogFooter>
         <Button
-          variant="outline"
+          variant="secondary"
           onClick={() => onOpenChange(false)}
+          className={theme === 'dark' ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-black hover:bg-gray-300'}
         >
           Cancel
         </Button>

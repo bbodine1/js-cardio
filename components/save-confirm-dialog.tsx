@@ -36,7 +36,11 @@ export const SaveConfirmationDialog: React.FC<SaveConfirmationDialogProps> = ({
         </DialogDescription>
       </DialogHeader>
       <DialogFooter>
-        <Button variant="outline" onClick={onDontSave}>
+        <Button
+          variant="secondary"
+          onClick={onDontSave}
+          className={theme === 'dark' ? 'bg-gray-700 text-white hover:bg-gray-600' : 'bg-gray-200 text-black hover:bg-gray-300'}
+        >
           Don&apos;t Save
         </Button>
         <Button onClick={onSave}>
