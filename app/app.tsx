@@ -61,6 +61,9 @@ export function App() {
 	})
 	const [isShortcutsDialogOpen, setIsShortcutsDialogOpen] = useState(false);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+	const [pendingTestSelection, setPendingTestSelection] = useState<string | 'new' | null>(null);
+	const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
 	const [tests, setTests] = useState<Test[]>(() => {
 		if (typeof window !== 'undefined') {
@@ -188,6 +191,15 @@ export function App() {
 	}
 
 	const openNewTestDialog = () => {
+		if (hasUnsavedChanges) {
+			setPendingTestSelection('new');
+			setIsSaveDialogOpen(true);
+		} else {
+			openNewTestDialogDirectly();
+		}
+	};
+
+	const openNewTestDialogDirectly = () => {
 		setDialogState({
 			isOpen: true,
 			type: 'new',
@@ -207,6 +219,7 @@ export function App() {
 					setCode(newTest.code)
 					setAssertions(newTest.assertions)
 					setDialogState(prev => ({ ...prev, isOpen: false }))
+					setHasUnsavedChanges(false);
 				}
 			},
 		})
@@ -236,6 +249,7 @@ export function App() {
 		if (currentTest) {
 			setTests(prevTests => prevTests.map(test => (test.id === currentTest.id ? { ...test, code, assertions } : test)))
 			setCurrentTest({ ...currentTest, code, assertions })
+			setHasUnsavedChanges(false);
 		}
 	}
 
@@ -260,14 +274,24 @@ export function App() {
 		}
 	}, [currentTest])
 
-	const selectTest = (testId: string) => {
-		const selected = tests.find(test => test.id === testId)
-		if (selected) {
-			setCurrentTest(selected)
-			setCode(selected.code)
-			setAssertions(selected.assertions)
+	const handleTestSelection = (testId: string) => {
+		if (hasUnsavedChanges) {
+			setPendingTestSelection(testId);
+			setIsSaveDialogOpen(true);
+		} else {
+			selectTest(testId);
 		}
-	}
+	};
+
+	const selectTest = (testId: string) => {
+		const selected = tests.find(test => test.id === testId);
+		if (selected) {
+			setCurrentTest(selected);
+			setCode(selected.code);
+			setAssertions(selected.assertions);
+			setHasUnsavedChanges(false);
+		}
+	};
 
 	const editorTheme = theme === 'dark' ? vscodeDarkTheme : vscodeLightTheme
 
@@ -361,6 +385,52 @@ export function App() {
 		</Dialog>
 	);
 
+	const SaveConfirmationDialog = () => (
+		<Dialog open={isSaveDialogOpen} onOpenChange={setIsSaveDialogOpen}>
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>Unsaved Changes</DialogTitle>
+					<DialogDescription>
+						You have unsaved changes. Do you want to save them before {pendingTestSelection === 'new' ? 'creating a new test' : 'switching tests'}?
+					</DialogDescription>
+				</DialogHeader>
+				<DialogFooter>
+					<Button variant="outline" onClick={() => {
+						setIsSaveDialogOpen(false);
+						if (pendingTestSelection === 'new') {
+							openNewTestDialogDirectly();
+						} else if (pendingTestSelection) {
+							selectTest(pendingTestSelection);
+						}
+					}}>
+						Don't Save
+					</Button>
+					<Button onClick={() => {
+						saveCurrentTest();
+						setIsSaveDialogOpen(false);
+						if (pendingTestSelection === 'new') {
+							openNewTestDialogDirectly();
+						} else if (pendingTestSelection) {
+							selectTest(pendingTestSelection);
+						}
+					}}>
+						Save
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
+	);
+
+	const handleCodeChange = (value: string) => {
+		setCode(value);
+		setHasUnsavedChanges(true);
+	};
+
+	const handleAssertionsChange = (value: string) => {
+		setAssertions(value);
+		setHasUnsavedChanges(true);
+	};
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<div className="flex justify-between items-center mb-4">
@@ -377,7 +447,7 @@ export function App() {
 
 			<div className="flex justify-between items-center mb-4">
 				<Select
-					onValueChange={selectTest}
+					onValueChange={handleTestSelection}
 					value={currentTest?.id}
 				>
 					<SelectTrigger className="w-[180px]">
@@ -467,7 +537,7 @@ export function App() {
 							value={code}
 							height={maximizedEditor === 'code' ? 'calc(100vh - 400px)' : '200px'}
 							extensions={[javascript({ jsx: true })]}
-							onChange={value => setCode(value)}
+							onChange={handleCodeChange}
 							theme={editorTheme}
 						/>
 					</div>
@@ -509,7 +579,7 @@ export function App() {
 							value={assertions}
 							height={maximizedEditor === 'assertions' ? 'calc(100vh - 400px)' : '200px'}
 							extensions={[javascript({ jsx: true })]}
-							onChange={value => setAssertions(value)}
+							onChange={handleAssertionsChange}
 							theme={editorTheme}
 						/>
 					</div>
@@ -592,6 +662,7 @@ export function App() {
 
 			<ShortcutsDialog />
 			<DeleteConfirmationDialog />
+			<SaveConfirmationDialog />
 		</div>
 	)
 }
