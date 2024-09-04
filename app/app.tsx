@@ -19,6 +19,7 @@ import { Moon, Sun, X, Plus, Save, Edit, Trash, Play, Undo, Maximize2, Minimize2
 import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from '../components/DEFAULT_TESTS'
 import { cn } from "@/lib/utils"
+import { ShortcutsDialog } from '@/components/shortcuts-dialog'
 
 type Test = {
 	id: string
@@ -366,36 +367,6 @@ export function App() {
 			document.removeEventListener('keydown', handleKeyDown)
 		}
 	}, [handleKeyDown])
-
-	const ShortcutsDialog = () => (
-		<Dialog
-			open={isShortcutsDialogOpen}
-			onOpenChange={setIsShortcutsDialogOpen}
-		>
-			<DialogContent className={cn("sm:max-w-[600px]", theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black')}>
-				<DialogHeader>
-					<DialogTitle>Keyboard Shortcuts</DialogTitle>
-					<DialogDescription>Here are all the available keyboard shortcuts:</DialogDescription>
-				</DialogHeader>
-				<div className="grid grid-cols-2 gap-4">
-					<div>
-						<h3 className="font-semibold">General</h3>
-						<ul className="list-disc list-inside">
-							<li>⌘/ or Ctrl+/: Toggle this dialog</li>
-							<li>⌘S or Ctrl+S: Run Code</li>
-						</ul>
-					</div>
-					<div>
-						<h3 className="font-semibold">Editors</h3>
-						<ul className="list-disc list-inside">
-							<li>⌘M or Ctrl+M: Maximize/Minimize focused editor</li>
-							<li>Esc: Minimize maximized editor</li>
-						</ul>
-					</div>
-				</div>
-			</DialogContent>
-		</Dialog>
-	)
 
 	const DeleteConfirmationDialog = () => (
 		<Dialog
@@ -793,7 +764,11 @@ export function App() {
 				</DialogContent>
 			</Dialog>
 
-			<ShortcutsDialog />
+			<ShortcutsDialog
+				isOpen={isShortcutsDialogOpen}
+				onOpenChange={setIsShortcutsDialogOpen}
+				theme={theme}
+			/>
 			<DeleteConfirmationDialog />
 			<SaveConfirmationDialog />
 		</div>
