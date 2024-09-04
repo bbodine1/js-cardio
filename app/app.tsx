@@ -259,10 +259,33 @@ export function App() {
 
 	const confirmDelete = () => {
 		if (currentTest) {
-			setTests(prevTests => prevTests.filter(test => test.id !== currentTest.id));
-			setCurrentTest(null);
-			setCode('// Write your JavaScript code here');
-			setAssertions('// Write your assertions here');
+			setTests(prevTests => {
+				const updatedTests = prevTests.filter(test => test.id !== currentTest.id);
+				
+				// Select the first available test or set to null if no tests remain
+				const nextTest = updatedTests.length > 0 ? updatedTests[0] : null;
+				
+				if (nextTest) {
+					setCurrentTest(nextTest);
+					setCode(nextTest.code);
+					setAssertions(nextTest.assertions);
+				} else {
+					// If no tests remain, set to default test
+					const defaultTest: Test = {
+						id: 'default',
+						name: 'Default Test',
+						code: '// Write your JavaScript code here\nfunction sum(a, b) {\n  return a + b;\n}\n\nconsole.log(sum(1, 2));',
+						assertions: '// Write your assertions here\nassert(sum(1, 2) === 3);\nassert(sum(-1, 1) === 0);'
+					};
+					setTests([defaultTest]);
+					setCurrentTest(defaultTest);
+					setCode(defaultTest.code);
+					setAssertions(defaultTest.assertions);
+				}
+				
+				setHasUnsavedChanges(false);
+				return updatedTests;
+			});
 		}
 		setIsDeleteDialogOpen(false);
 	};
