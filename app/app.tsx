@@ -341,6 +341,14 @@ export function App() {
 				} else if (event.key === '/') {
 					event.preventDefault()
 					setIsShortcutsDialogOpen(prev => !prev)
+				} else if (event.key === ',') {
+					event.preventDefault()
+					const codeContent = codeEditorRef.current?.querySelector('.cm-content') as HTMLElement
+					codeContent?.focus()
+				} else if (event.key === '.') {
+					event.preventDefault()
+					const assertionsContent = assertionsEditorRef.current?.querySelector('.cm-content') as HTMLElement
+					assertionsContent?.focus()
 				}
 			} else if (event.key === 'Escape') {
 				if (maximizedEditor) {

@@ -24,20 +24,50 @@ export const ShortcutsDialog: React.FC<ShortcutsDialogProps> = ({ isOpen, onOpen
         <DialogTitle>Keyboard Shortcuts</DialogTitle>
         <DialogDescription>Here are all the available keyboard shortcuts:</DialogDescription>
       </DialogHeader>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <h3 className="font-semibold">General</h3>
-          <ul className="list-disc list-inside">
-            <li>⌘/ or Ctrl+/: Toggle this dialog</li>
-            <li>⌘S or Ctrl+S: Run Code</li>
-          </ul>
+      <div className="grid gap-4">
+        <div className="grid grid-cols-2 items-center gap-4">
+          <span>
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘ + m</kbd>
+            {' '}or{' '}
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Ctrl + m</kbd>
+          </span>
+          <span>Maximize / minimize current editor</span>
         </div>
-        <div>
-          <h3 className="font-semibold">Editors</h3>
-          <ul className="list-disc list-inside">
-            <li>⌘M or Ctrl+M: Maximize/Minimize focused editor</li>
-            <li>Esc: Minimize maximized editor</li>
-          </ul>
+        <div className="grid grid-cols-2 items-center gap-4">
+          <span>
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘ + /</kbd>
+            {' '}or{' '}
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Ctrl + /</kbd>
+          </span>
+          <span>Open / close shortcuts dialog</span>
+        </div>
+        <div className="grid grid-cols-2 items-center gap-4">
+          <span>
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘ + S</kbd>
+            {' '}or{' '}
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Ctrl + S</kbd>
+          </span>
+          <span>Run code</span>
+        </div>
+        <div className="grid grid-cols-2 items-center gap-4">
+          <span>
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘ + ,</kbd>
+            {' '}or{' '}
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Ctrl + ,</kbd>
+          </span>
+          <span>Focus code editor</span>
+        </div>
+        <div className="grid grid-cols-2 items-center gap-4">
+          <span>
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">⌘ + .</kbd>
+            {' '}or{' '}
+            <kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Ctrl + .</kbd>
+          </span>
+          <span>Focus assertions editor</span>
+        </div>
+        <div className="grid grid-cols-2 items-center gap-4">
+          <span><kbd className="px-2 py-1.5 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg">Esc</kbd></span>
+          <span>Exit maximized editor / Close dialog</span>
         </div>
       </div>
     </DialogContent>
