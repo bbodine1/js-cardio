@@ -13,6 +13,7 @@ import { Header } from '@/components/header'
 import { EditorSection } from '@/components/editor-section'
 import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
 import { TestNameDialog } from '@/components/new-test-dialog'
+import { useLocalStorage } from '@/hooks/useLocalStorage'
 
 type Test = {
 	id: string
@@ -32,7 +33,7 @@ export function App() {
 	)
 	const [results, setResults] = useState('')
 	const [consoleOutput, setConsoleOutput] = useState('')
-	const [theme, setTheme] = useState<'light' | 'dark'>('light')
+	const [theme, setTheme] = useLocalStorage<'light' | 'dark'>('theme', 'light')
 	const [currentTest, setCurrentTest] = useState<Test | null>(null)
 	const [dialogState, setDialogState] = useState<{
 		isOpen: boolean
@@ -79,7 +80,9 @@ export function App() {
 
 	useEffect(() => {
 		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-		setTheme(prefersDark ? 'dark' : 'light')
+		if (!localStorage.getItem('theme')) {
+			setTheme(prefersDark ? 'dark' : 'light')
+		}
 		const savedTests = localStorage.getItem(lsKey)
 		if (savedTests) {
 			const parsedTests = JSON.parse(savedTests)
@@ -92,7 +95,7 @@ export function App() {
 				setAssertions(firstTest.assertions)
 			}
 		}
-	}, [])
+	}, [setTheme])
 
 	useEffect(() => {
 		localStorage.setItem(lsKey, JSON.stringify(tests))
@@ -167,8 +170,8 @@ export function App() {
 	}, [runCode])
 
 	const toggleTheme = useCallback(() => {
-		setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'))
-	}, [])
+		setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+	}, [setTheme])
 
 	useEffect(() => {
 		document.documentElement.setAttribute('data-theme', theme)
@@ -344,19 +347,11 @@ export function App() {
 				} else if (event.key === ',') {
 					event.preventDefault()
 					const codeContent = codeEditorRef.current?.querySelector('.cm-content') as HTMLElement
-					if (document.activeElement === codeContent) {
-						codeContent.blur()
-					} else {
-						codeContent?.focus()
-					}
+					codeContent?.focus()
 				} else if (event.key === '.') {
 					event.preventDefault()
 					const assertionsContent = assertionsEditorRef.current?.querySelector('.cm-content') as HTMLElement
-					if (document.activeElement === assertionsContent) {
-						assertionsContent.blur()
-					} else {
-						assertionsContent?.focus()
-					}
+					assertionsContent?.focus()
 				}
 			} else if (event.key === 'Escape') {
 				if (maximizedEditor) {
@@ -408,20 +403,12 @@ export function App() {
 
 	const focusCodeEditor = useCallback(() => {
 		const codeContent = codeEditorRef.current?.querySelector('.cm-content') as HTMLElement
-		if (document.activeElement === codeContent) {
-			codeContent.blur()
-		} else {
-			codeContent?.focus()
-		}
+		codeContent?.focus()
 	}, [])
 
 	const focusAssertionsEditor = useCallback(() => {
 		const assertionsContent = assertionsEditorRef.current?.querySelector('.cm-content') as HTMLElement
-		if (document.activeElement === assertionsContent) {
-			assertionsContent.blur()
-		} else {
-			assertionsContent?.focus()
-		}
+		assertionsContent?.focus()
 	}, [])
 
 	return (
