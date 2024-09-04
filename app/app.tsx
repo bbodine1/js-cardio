@@ -20,6 +20,7 @@ import { ShortcutsDialog } from '@/components/shortcuts-dialog'
 import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
 import { Header } from '@/components/header'
 import { EditorSection } from '@/components/editor-section'
+import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
 
 type Test = {
 	id: string
@@ -368,50 +369,24 @@ export function App() {
 		}
 	}, [handleKeyDown])
 
-	const SaveConfirmationDialog = () => (
-		<Dialog
-			open={isSaveDialogOpen}
-			onOpenChange={setIsSaveDialogOpen}
-		>
-			<DialogContent className={theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}>
-				<DialogHeader>
-					<DialogTitle>Unsaved Changes</DialogTitle>
-					<DialogDescription>
-						You have unsaved changes. Do you want to save them before{' '}
-						{pendingTestSelection === 'new' ? 'creating a new test' : 'switching tests'}?
-					</DialogDescription>
-				</DialogHeader>
-				<DialogFooter>
-					<Button
-						variant="outline"
-						onClick={() => {
-							setIsSaveDialogOpen(false)
-							if (pendingTestSelection === 'new') {
-								openNewTestDialogDirectly()
-							} else if (pendingTestSelection) {
-								selectTest(pendingTestSelection)
-							}
-						}}
-					>
-						Don&apos;t Save
-					</Button>
-					<Button
-						onClick={() => {
-							saveCurrentTest()
-							setIsSaveDialogOpen(false)
-							if (pendingTestSelection === 'new') {
-								openNewTestDialogDirectly()
-							} else if (pendingTestSelection) {
-								selectTest(pendingTestSelection)
-							}
-						}}
-					>
-						Save
-					</Button>
-				</DialogFooter>
-			</DialogContent>
-		</Dialog>
-	)
+	const handleSaveConfirmation = () => {
+		saveCurrentTest()
+		setIsSaveDialogOpen(false)
+		if (pendingTestSelection === 'new') {
+			openNewTestDialogDirectly()
+		} else if (pendingTestSelection) {
+			selectTest(pendingTestSelection)
+		}
+	}
+
+	const handleDontSave = () => {
+		setIsSaveDialogOpen(false)
+		if (pendingTestSelection === 'new') {
+			openNewTestDialogDirectly()
+		} else if (pendingTestSelection) {
+			selectTest(pendingTestSelection)
+		}
+	}
 
 	const handleCodeChange = (value: string) => {
 		setCode(value)
@@ -637,7 +612,14 @@ export function App() {
 				onConfirm={confirmDelete}
 				theme={theme}
 			/>
-			<SaveConfirmationDialog />
+			<SaveConfirmationDialog
+				isOpen={isSaveDialogOpen}
+				onOpenChange={setIsSaveDialogOpen}
+				theme={theme}
+				pendingTestSelection={pendingTestSelection}
+				onSave={handleSaveConfirmation}
+				onDontSave={handleDontSave}
+			/>
 		</div>
 	)
 }
