@@ -45,14 +45,12 @@ export function App() {
 		title: string
 		description: string
 		inputValue: string
-		onSave: () => void
 	}>({
 		isOpen: false,
 		type: 'new',
 		title: '',
 		description: '',
 		inputValue: '',
-		onSave: () => {},
 	})
 	const [isShortcutsDialogOpen, setIsShortcutsDialogOpen] = useState(false)
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
@@ -185,6 +183,38 @@ export function App() {
 		setConsoleOutput('')
 	}
 
+	const handleDialogSave = () => {
+		if (dialogState.type === 'new') {
+			if (dialogState.inputValue.trim()) {
+				const newTest: Test = {
+					id: Date.now().toString(),
+					name: dialogState.inputValue,
+					code: '// Write your JavaScript code here',
+					assertions: '// Write your assertions here',
+				}
+				setTests(prevTests => [...prevTests, newTest])
+				setCurrentTest(newTest)
+				setCode(newTest.code)
+				setAssertions(newTest.assertions)
+				setDialogState(prev => ({ ...prev, isOpen: false }))
+				setHasUnsavedChanges(false)
+			}
+		} else if (dialogState.type === 'edit' && currentTest) {
+			const updatedTests = tests.map(test =>
+				test.id === currentTest.id ? { ...currentTest, name: dialogState.inputValue } : test
+			)
+			setTests(updatedTests)
+			setCurrentTest(prev => (prev ? { ...prev, name: dialogState.inputValue } : null))
+			setDialogState(prev => ({ ...prev, isOpen: false }))
+		}
+	}
+
+	const handleDialogKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+		if (event.key === 'Enter') {
+			handleDialogSave()
+		}
+	}
+
 	const openNewTestDialog = () => {
 		if (hasUnsavedChanges) {
 			setPendingTestSelection('new')
@@ -201,22 +231,6 @@ export function App() {
 			title: 'Create New Test',
 			description: 'Enter a name for your new test.',
 			inputValue: '',
-			onSave: () => {
-				if (dialogState.inputValue.trim()) {
-					const newTest: Test = {
-						id: Date.now().toString(),
-						name: dialogState.inputValue,
-						code: '// Write your JavaScript code here',
-						assertions: '// Write your assertions here',
-					}
-					setTests(prevTests => [...prevTests, newTest])
-					setCurrentTest(newTest)
-					setCode(newTest.code)
-					setAssertions(newTest.assertions)
-					setDialogState(prev => ({ ...prev, isOpen: false }))
-					setHasUnsavedChanges(false)
-				}
-			},
 		})
 	}
 
@@ -228,14 +242,6 @@ export function App() {
 				title: 'Edit Test',
 				description: 'Edit the name of your test.',
 				inputValue: currentTest.name,
-				onSave: () => {
-					const updatedTests = tests.map(test =>
-						test.id === currentTest.id ? { ...currentTest, name: dialogState.inputValue } : test
-					)
-					setTests(updatedTests)
-					setCurrentTest(prev => (prev ? { ...prev, name: dialogState.inputValue } : null))
-					setDialogState(prev => ({ ...prev, isOpen: false }))
-				},
 			})
 		}
 	}
@@ -708,11 +714,12 @@ export function App() {
 					<Input
 						value={dialogState.inputValue}
 						onChange={e => setDialogState(prev => ({ ...prev, inputValue: e.target.value }))}
+						onKeyDown={handleDialogKeyDown}
 						placeholder="Test name"
 					/>
 
 					<DialogFooter>
-						<Button onClick={dialogState.onSave}>Save</Button>
+						<Button onClick={handleDialogSave}>Save</Button>
 					</DialogFooter>
 				</DialogContent>
 			</Dialog>
