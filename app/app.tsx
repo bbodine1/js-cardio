@@ -110,6 +110,7 @@ export function App() {
 		}
 
 		const assertionResults: string[] = []
+		// eslint-disable-next-line prefer-const
 		let assertionCount = 0
 
 		try {
@@ -138,11 +139,13 @@ export function App() {
 			}
 
 			setResults(assertionResults.join('\n'))
-		} catch (error: any) {
-			if (error.message.startsWith('Assertion failed')) {
+		} catch (error: unknown) {
+			if (error instanceof Error && error.message.startsWith('Assertion failed')) {
 				assertionResults.push(`❌ Assertion ${assertionCount} failed: ${error.message}`)
-			} else {
+			} else if (error instanceof Error) {
 				assertionResults.push(`❌ Error: ${error.message}`)
+			} else {
+				assertionResults.push(`❌ Unknown error occurred`)
 			}
 			setResults(assertionResults.join('\n'))
 		} finally {
@@ -152,7 +155,7 @@ export function App() {
 	}, [code, assertions])
 
 	useEffect(() => {
-		const handleKeyDown = (event: { metaKey: any; ctrlKey: any; key: string; preventDefault: () => void }) => {
+		const handleKeyDown = (event: KeyboardEvent) => {
 			if ((event.metaKey || event.ctrlKey) && event.key === 's') {
 				event.preventDefault()
 				const activeElement = document.activeElement
@@ -170,7 +173,7 @@ export function App() {
 	}, [runCode])
 
 	const toggleTheme = useCallback(() => {
-		setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light')
+		setTheme(prevTheme => (prevTheme === 'light' ? 'dark' : 'light'))
 	}, [setTheme])
 
 	useEffect(() => {
@@ -413,7 +416,10 @@ export function App() {
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
-			<Header theme={theme} toggleTheme={toggleTheme} />
+			<Header
+				theme={theme}
+				toggleTheme={toggleTheme}
+			/>
 
 			<main>
 				<div className="flex justify-between items-center mb-4">
@@ -601,11 +607,11 @@ export function App() {
 
 			<TestNameDialog
 				isOpen={dialogState.isOpen}
-				onOpenChange={(isOpen) => setDialogState(prev => ({ ...prev, isOpen }))}
+				onOpenChange={isOpen => setDialogState(prev => ({ ...prev, isOpen }))}
 				title={dialogState.title}
 				description={dialogState.description}
 				inputValue={dialogState.inputValue}
-				onInputChange={(value) => setDialogState(prev => ({ ...prev, inputValue: value }))}
+				onInputChange={value => setDialogState(prev => ({ ...prev, inputValue: value }))}
 				onKeyDown={handleDialogKeyDown}
 				onSave={handleDialogSave}
 				theme={theme}
