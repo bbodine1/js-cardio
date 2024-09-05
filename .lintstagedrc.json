@@ -1,1 +1,1 @@
-{"*.{js,jsx,ts,tsx}": ["npm test", "eslint --fix", "git add"]}
+{ "*.{js,jsx,ts,tsx}": ["npm test", "eslint --fix"] }
