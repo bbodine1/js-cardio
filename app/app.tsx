@@ -256,6 +256,8 @@ export function App() {
 			description: 'Enter a name for your new test.',
 			inputValue: '',
 		})
+		setResults('') // Clear results
+		setConsoleOutput('') // Clear console output
 	}
 
 	const openEditTestDialog = () => {
@@ -354,6 +356,8 @@ export function App() {
 			setCode(selected.code)
 			setAssertions(selected.assertions)
 			setHasUnsavedChanges(false)
+			setResults('') // Clear results
+			setConsoleOutput('') // Clear console output
 		}
 	}
 
