@@ -113,6 +113,8 @@ export function App() {
 		const assertionResults: string[] = []
 		// eslint-disable-next-line prefer-const
 		let assertionCount = 0
+		// eslint-disable-next-line prefer-const
+		let failedAssertions = 0
 
 		try {
 			// Combine code and assertions
@@ -122,40 +124,36 @@ export function App() {
         function assert(condition, message = 'No message provided') {
           assertionCount++;
           if (!condition) {
-            throw new Error(message);
+            failedAssertions++;
+            assertionResults.push(\`❌ Assertion \${assertionCount} failed: \${message}\`);
+          } else {
+            assertionResults.push(\`✅ Assertion \${assertionCount} passed: \${message}\`);
           }
-          assertionResults.push(\`✅ Assertion \${assertionCount} passed: \${message}\`);
         }
   
         ${assertions}
       `
 			// Run combined code
 			eval(combinedCode)
-
-			// If no assertions were run, add a message
-			if (assertionCount === 0) {
-				assertionResults.push('⚠️ No assertions were found or executed.')
-			} else {
-				assertionResults.push(`\n✅ All ${assertionCount} assertion(s) passed.`)
-			}
-
-			setResults(() => {
-				const allPassed = assertionResults.every(result => result.startsWith('✅'))
-				const summary = allPassed ? '✅ Pass' : '❌ Fail'
-				return `${summary}\n\n${assertionResults.join('\n')}`
-			})
 		} catch (error: unknown) {
-			if (error instanceof Error && error.message.startsWith('Assertion failed')) {
-				assertionResults.push(`❌ Assertion ${assertionCount} failed: ${error.message}`)
-			} else if (error instanceof Error) {
+			if (error instanceof Error) {
 				assertionResults.push(`❌ Error: ${error.message}`)
 			} else {
 				assertionResults.push(`❌ Unknown error occurred`)
 			}
-			setResults(assertionResults.join('\n'))
 		} finally {
 			console.log = originalLog
 			setConsoleOutput(output)
+
+			let summary = ''
+			if (assertionCount === 0) {
+				summary = '⚠️ No assertions were found or executed.'
+			} else if (failedAssertions > 0) {
+				summary = `❌ ${failedAssertions} assertion(s) failed.`
+			} else {
+				summary = `✅ All ${assertionCount} assertion(s) passed.`
+			}
+			setResults(`${summary}\n\n${assertionResults.join('\n')}`)
 		}
 	}, [code, assertions])
 
