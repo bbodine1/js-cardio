@@ -1,10 +1,9 @@
 import React from 'react'
+import React from 'react'
 import type { Metadata } from 'next'
-// import { Inter } from 'next/font/google'
 import './globals.css'
 import { cn } from '@/lib/utils'
-
-// const inter = Inter({ subsets: ['latin'] })
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
 	title: 'JavaScript Cardio',
@@ -80,6 +79,7 @@ export default function RootLayout({
           `,
 					}}
 				/>
+				<Analytics />
 			</body>
 		</html>
 	)
