@@ -1,5 +1,4 @@
 import React from 'react'
-import React from 'react'
 import type { Metadata } from 'next'
 import './globals.css'
 import { cn } from '@/lib/utils'
