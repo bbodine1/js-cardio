@@ -319,17 +319,15 @@ export function App() {
 				}
 
 				setHasUnsavedChanges(false)
+				toast.success('Test deleted successfully!', {
+					duration: 2000,
+					position: 'bottom-center',
+					style: {
+						background: theme === 'dark' ? '#333' : '#fff',
+						color: theme === 'dark' ? '#fff' : '#333',
+					},
+				})
 				return updatedTests
-			})
-
-			// Move the toast outside of the setTests callback
-			toast.success('Test deleted successfully!', {
-				duration: 2000,
-				position: 'bottom-center',
-				style: {
-					background: theme === 'dark' ? '#333' : '#fff',
-					color: theme === 'dark' ? '#fff' : '#333',
-				},
 			})
 		}
 		setIsDeleteDialogOpen(false)
@@ -443,16 +441,6 @@ export function App() {
 		setHasUnsavedChanges(true)
 	}
 
-	const focusCodeEditor = useCallback(() => {
-		const codeContent = codeEditorRef.current?.querySelector('.cm-content') as HTMLElement
-		codeContent?.focus()
-	}, [])
-
-	const focusAssertionsEditor = useCallback(() => {
-		const assertionsContent = assertionsEditorRef.current?.querySelector('.cm-content') as HTMLElement
-		assertionsContent?.focus()
-	}, [])
-
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<Header
@@ -547,8 +535,7 @@ export function App() {
 							toggleMaximizedEditor={toggleMaximizedEditor}
 							editorTheme={editorTheme}
 							editorRef={codeEditorRef}
-							currentTest={currentTest}
-							onFocus={focusCodeEditor}
+							currentTest={currentTest as Test} // Type assertion
 						/>
 					)}
 
@@ -563,8 +550,7 @@ export function App() {
 							toggleMaximizedEditor={toggleMaximizedEditor}
 							editorTheme={editorTheme}
 							editorRef={assertionsEditorRef}
-							currentTest={currentTest}
-							onFocus={focusAssertionsEditor}
+							currentTest={currentTest as Test} // Type assertion
 						/>
 					)}
 
