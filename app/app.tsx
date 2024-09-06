@@ -14,6 +14,7 @@ import { EditorSection } from '@/components/editor-section'
 import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
 import { TestNameDialog } from '@/components/new-test-dialog'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
+import { Toaster, toast } from 'react-hot-toast'
 
 type Test = {
 	id: string
@@ -138,7 +139,11 @@ export function App() {
 				assertionResults.push(`\n✅ All ${assertionCount} assertion(s) passed.`)
 			}
 
-			setResults(assertionResults.join('\n'))
+			setResults(() => {
+				const allPassed = assertionResults.every(result => result.startsWith('✅'))
+				const summary = allPassed ? '✅ Pass' : '❌ Fail'
+				return `${summary}\n\n${assertionResults.join('\n')}`
+			})
 		} catch (error: unknown) {
 			if (error instanceof Error && error.message.startsWith('Assertion failed')) {
 				assertionResults.push(`❌ Assertion ${assertionCount} failed: ${error.message}`)
@@ -203,6 +208,14 @@ export function App() {
 				setAssertions(newTest.assertions)
 				setDialogState(prev => ({ ...prev, isOpen: false }))
 				setHasUnsavedChanges(false)
+				toast.success('New test created successfully!', {
+					duration: 2000,
+					position: 'bottom-center',
+					style: {
+						background: theme === 'dark' ? '#333' : '#fff',
+						color: theme === 'dark' ? '#fff' : '#333',
+					},
+				})
 			}
 		} else if (dialogState.type === 'edit' && currentTest) {
 			const updatedTests = tests.map(test =>
@@ -211,6 +224,14 @@ export function App() {
 			setTests(updatedTests)
 			setCurrentTest(prev => (prev ? { ...prev, name: dialogState.inputValue } : null))
 			setDialogState(prev => ({ ...prev, isOpen: false }))
+			toast.success('Test edited successfully!', {
+				duration: 2000,
+				position: 'bottom-center',
+				style: {
+					background: theme === 'dark' ? '#333' : '#fff',
+					color: theme === 'dark' ? '#fff' : '#333',
+				},
+			})
 		}
 	}
 
@@ -256,6 +277,14 @@ export function App() {
 			setTests(prevTests => prevTests.map(test => (test.id === currentTest.id ? { ...test, code, assertions } : test)))
 			setCurrentTest({ ...currentTest, code, assertions })
 			setHasUnsavedChanges(false)
+			toast.success('Test saved successfully!', {
+				duration: 2000,
+				position: 'bottom-center',
+				style: {
+					background: theme === 'dark' ? '#333' : '#fff',
+					color: theme === 'dark' ? '#fff' : '#333',
+				},
+			})
 		}
 	}
 
@@ -291,6 +320,16 @@ export function App() {
 
 				setHasUnsavedChanges(false)
 				return updatedTests
+			})
+
+			// Move the toast outside of the setTests callback
+			toast.success('Test deleted successfully!', {
+				duration: 2000,
+				position: 'bottom-center',
+				style: {
+					background: theme === 'dark' ? '#333' : '#fff',
+					color: theme === 'dark' ? '#fff' : '#333',
+				},
 			})
 		}
 		setIsDeleteDialogOpen(false)
@@ -638,6 +677,8 @@ export function App() {
 				onSave={handleSaveConfirmation}
 				onDontSave={handleDontSave}
 			/>
+
+			<Toaster />
 		</div>
 	)
 }
