@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun, Github } from 'lucide-react'
+import { Moon, Sun, Github, AlertCircle } from 'lucide-react'
 
 interface HeaderProps {
 	theme: 'light' | 'dark'
@@ -10,6 +10,10 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 	const openGitHubRepo = () => {
 		window.open('https://github.com/bbodine1/js-cardio/stargazers', '_blank')
+	}
+
+	const openNewIssue = () => {
+		window.open('https://github.com/bbodine1/js-cardio/issues/new', '_blank')
 	}
 
 	return (
@@ -25,6 +29,15 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 						aria-label="Open GitHub repository"
 					>
 						<Github className="h-[1.2rem] w-[1.2rem]" />
+					</Button>
+
+					<Button
+						onClick={openNewIssue}
+						variant={theme === 'dark' ? 'ghost' : 'default'}
+						size="icon"
+						aria-label="Open new issue page"
+					>
+						<AlertCircle className="h-[1.2rem] w-[1.2rem]" />
 					</Button>
 
 					<Button
