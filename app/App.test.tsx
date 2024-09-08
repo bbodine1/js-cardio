@@ -62,6 +62,7 @@ describe('App', () => {
 		const runCodeButton = screen.getByRole('button', { name: /run code/i })
 
 		fireEvent.click(runCodeButton)
-		expect(screen.getByText(/assertion/i)).toBeInTheDocument()
+		// Use a more specific selector
+		expect(screen.getByText(/❌ \d+ assertion\(s\) failed\./)).toBeInTheDocument()
 	})
 })
