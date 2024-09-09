@@ -452,24 +452,47 @@ export function App() {
 
 			<main>
 				<div className="flex justify-between items-center mb-4">
-					<Select
-						onValueChange={handleTestSelection}
-						value={currentTest?.id}
-					>
-						<SelectTrigger className="w-[180px]">
-							<SelectValue placeholder="Select a test" />
-						</SelectTrigger>
-						<SelectContent>
-							{tests.map(test => (
-								<SelectItem
-									key={test.id}
-									value={test.id}
-								>
-									{test.name}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<div className="flex items-center gap-2">
+						<Select
+							onValueChange={handleTestSelection}
+							value={currentTest?.id}
+						>
+							<SelectTrigger className="w-[180px]">
+								<SelectValue placeholder="Select a test" />
+							</SelectTrigger>
+							<SelectContent>
+								{tests.map(test => (
+									<SelectItem
+										key={test.id}
+										value={test.id}
+									>
+										{test.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+
+						<TooltipProvider>
+							<Tooltip>
+								<TooltipTrigger asChild>
+									<Button
+										onClick={runCode}
+										variant={theme === 'dark' ? 'ghost' : 'default'}
+									>
+										<Play
+											className="h-4 w-4 mr-2"
+											aria-hidden="true"
+										/>
+										Run Code
+									</Button>
+								</TooltipTrigger>
+
+								<TooltipContent>
+									<p>Run Code (⌘S or Ctrl+S)</p>
+								</TooltipContent>
+							</Tooltip>
+						</TooltipProvider>
+					</div>
 
 					<div
 						className="flex gap-2"
@@ -608,28 +631,6 @@ export function App() {
 						</section>
 					</div>
 				</div>
-
-				<TooltipProvider>
-					<Tooltip>
-						<TooltipTrigger asChild>
-							<Button
-								onClick={runCode}
-								className="mt-4"
-								variant={theme === 'dark' ? 'ghost' : 'default'}
-							>
-								<Play
-									className="h-4 w-4 mr-2"
-									aria-hidden="true"
-								/>
-								Run Code
-							</Button>
-						</TooltipTrigger>
-
-						<TooltipContent>
-							<p>Run Code (⌘S or Ctrl+S)</p>
-						</TooltipContent>
-					</Tooltip>
-				</TooltipProvider>
 			</main>
 
 			<TestNameDialog
