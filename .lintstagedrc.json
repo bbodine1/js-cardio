@@ -1,1 +1,1 @@
-{ "*.{js,jsx,ts,tsx}": ["eslint --fix"] }
+{ "*.{js,jsx,ts,tsx}": ["eslint --fix", "npm run version:bump && git add package.json package-lock.json"] }

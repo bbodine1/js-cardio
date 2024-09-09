@@ -1,5 +1,5 @@
 {
-	"name": "my-app",
+	"name": "js-cardio",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
@@ -9,6 +9,7 @@
 		"lint": "next lint",
 		"test": "jest",
 		"lint:staged": "lint-staged",
+		"version:bump": "standard-version --release-as patch",
 		"prepare": "husky",
 		"precommit": "eslint ."
 	},
@@ -56,6 +57,7 @@
 		"jest-environment-jsdom": "^29.7.0",
 		"lint-staged": "^15.2.10",
 		"postcss": "^8",
+		"standard-version": "^9.5.0",
 		"tailwindcss": "^3.4.1",
 		"typescript": "5.4.5",
 		"typescript-eslint": "^8.5.0"
