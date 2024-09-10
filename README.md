@@ -1,4 +1,4 @@
-# Your Project Name
+# JavaScript Cardio
 
 This project is inspired by [JavaScript Cardio](https://github.com/bradtraversy/javascript_cardio), a collection of intermediate JavaScript challenges.
 
