@@ -1,4 +1,3 @@
 {
-	"*.{js,jsx,ts,tsx}": ["eslint --fix"],
-	"*": ["npm run release"]
+	"*.{js,jsx,ts,tsx}": ["eslint --fix"]
 }
