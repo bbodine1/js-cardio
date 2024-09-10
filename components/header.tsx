@@ -13,7 +13,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 	}
 
 	const openNewIssue = () => {
-		window.open('https://github.com/bbodine1/js-cardio/issues/new', '_blank')
+		window.open('https://github.com/bbodine1/js-cardio/issues/new/choose', '_blank')
 	}
 
 	return (
