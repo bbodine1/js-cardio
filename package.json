@@ -1,6 +1,6 @@
 {
 	"name": "js-cardio",
-	"version": "0.1.1",
+	"version": "0.1.20",
 	"private": true,
 	"scripts": {
 		"dev": "next dev",
@@ -9,7 +9,7 @@
 		"lint": "next lint",
 		"test": "jest",
 		"lint:staged": "lint-staged",
-		"version:bump": "standard-version --release-as patch",
+		"release": "standard-version",
 		"prepare": "husky",
 		"precommit": "eslint ."
 	},
