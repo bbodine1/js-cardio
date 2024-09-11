@@ -15,6 +15,7 @@ import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
 import { TestNameDialog } from '@/components/new-test-dialog'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { Toaster, toast } from 'react-hot-toast'
+import { useMediaQuery } from '@/hooks/useMediaQuery'
 
 type Test = {
 	id: string
@@ -443,6 +444,8 @@ export function App() {
 		setHasUnsavedChanges(true)
 	}
 
+	const isSmallScreen = useMediaQuery('(max-width: 640px)')
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<Header
@@ -457,13 +460,13 @@ export function App() {
 			/>
 
 			<main>
-				<div className="flex justify-between items-center mb-4">
-					<div className="flex items-center gap-2">
+				<div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+					<div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
 						<Select
 							onValueChange={handleTestSelection}
 							value={currentTest?.id}
 						>
-							<SelectTrigger className="w-[180px]">
+							<SelectTrigger className="w-full sm:w-[180px]">
 								<SelectValue placeholder="Select a test" />
 							</SelectTrigger>
 							<SelectContent>
@@ -501,7 +504,7 @@ export function App() {
 					</div>
 
 					<div
-						className="flex gap-2"
+						className="flex flex-wrap gap-2 w-full sm:w-auto justify-start sm:justify-end"
 						role="toolbar"
 						aria-label="Test management actions"
 					>
@@ -554,7 +557,7 @@ export function App() {
 					</div>
 				</div>
 
-				<div className={`grid ${maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
+				<div className={`grid ${isSmallScreen || maximizedEditor ? 'grid-cols-1' : 'grid-cols-2'} gap-4`}>
 					{(!maximizedEditor || maximizedEditor === 'code') && (
 						<EditorSection
 							title="Code Editor"
@@ -566,7 +569,7 @@ export function App() {
 							toggleMaximizedEditor={toggleMaximizedEditor}
 							editorTheme={editorTheme}
 							editorRef={codeEditorRef}
-							currentTest={currentTest as Test} // Type assertion
+							currentTest={currentTest as Test}
 						/>
 					)}
 
@@ -581,61 +584,61 @@ export function App() {
 							toggleMaximizedEditor={toggleMaximizedEditor}
 							editorTheme={editorTheme}
 							editorRef={assertionsEditorRef}
-							currentTest={currentTest as Test} // Type assertion
+							currentTest={currentTest as Test}
 						/>
 					)}
+				</div>
 
-					<div className={maximizedEditor ? 'col-span-2 grid grid-cols-2 gap-4' : 'col-span-2 grid grid-cols-2 gap-4'}>
-						<section>
-							<div className="flex justify-between items-center mb-2">
-								<h2>Results</h2>
-								<Button
-									onClick={clearResults}
-									variant="ghost"
-									size="sm"
-								>
-									<X
-										className="h-4 w-4 mr-1"
-										aria-hidden="true"
-									/>
-									Clear
-								</Button>
-							</div>
-
-							<div
-								className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
-								role="region"
-								aria-label="Test results"
+				<div className={`grid ${isSmallScreen ? 'grid-cols-1' : 'grid-cols-2'} gap-4 mt-4`}>
+					<section>
+						<div className="flex justify-between items-center mb-2">
+							<h2>Results</h2>
+							<Button
+								onClick={clearResults}
+								variant="ghost"
+								size="sm"
 							>
-								<pre>{results}</pre>
-							</div>
-						</section>
+								<X
+									className="h-4 w-4 mr-1"
+									aria-hidden="true"
+								/>
+								Clear
+							</Button>
+						</div>
 
-						<section>
-							<div className="flex justify-between items-center mb-2">
-								<h2>Console Output</h2>
-								<Button
-									onClick={clearConsoleOutput}
-									variant="ghost"
-									size="sm"
-								>
-									<X
-										className="h-4 w-4 mr-1"
-										aria-hidden="true"
-									/>
-									Clear
-								</Button>
-							</div>
+						<div
+							className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
+							role="region"
+							aria-label="Test results"
+						>
+							<pre>{results}</pre>
+						</div>
+					</section>
 
-							<div
-								className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
-								role="region"
-								aria-label="Console output"
+					<section>
+						<div className="flex justify-between items-center mb-2">
+							<h2>Console Output</h2>
+							<Button
+								onClick={clearConsoleOutput}
+								variant="ghost"
+								size="sm"
 							>
-								<pre>{consoleOutput}</pre>
-							</div>
-						</section>
-					</div>
+								<X
+									className="h-4 w-4 mr-1"
+									aria-hidden="true"
+								/>
+								Clear
+							</Button>
+						</div>
+
+						<div
+							className={`p-2 h-[200px] overflow-auto ${theme === 'dark' ? 'bg-gray-800' : 'bg-gray-100'}`}
+							role="region"
+							aria-label="Console output"
+						>
+							<pre>{consoleOutput}</pre>
+						</div>
+					</section>
 				</div>
 			</main>
 
