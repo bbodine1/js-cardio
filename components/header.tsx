@@ -1,19 +1,39 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Moon, Sun, Github, AlertCircle } from 'lucide-react'
+import { Moon, Sun, Github, AlertCircle, RotateCcw } from 'lucide-react'
+import { ResetTestDialog } from '@/components/reset-test-dialog'
+import { lsKey } from '@/app/app' // Import the lsKey from app.tsx
 
 interface HeaderProps {
 	theme: 'light' | 'dark'
 	toggleTheme: () => void
+	onResetTests: () => void // Add this prop
 }
 
-export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
+export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests }) => {
+	const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
+
 	const openGitHubRepo = () => {
 		window.open('https://github.com/bbodine1/js-cardio/stargazers', '_blank')
 	}
 
 	const openNewIssue = () => {
 		window.open('https://github.com/bbodine1/js-cardio/issues/new/choose', '_blank')
+	}
+
+	const handleResetClick = () => {
+		setIsResetDialogOpen(true)
+	}
+
+	const handleResetConfirm = () => {
+		localStorage.removeItem(lsKey)
+		onResetTests() // Call the callback to update the app
+		setIsResetDialogOpen(false)
+	}
+
+	const handleResetCancel = () => {
+		console.log('cancelled')
+		setIsResetDialogOpen(false)
 	}
 
 	return (
@@ -29,6 +49,15 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 						aria-label="Open GitHub repository"
 					>
 						<Github className="h-[1.2rem] w-[1.2rem]" />
+					</Button>
+
+					<Button
+						onClick={handleResetClick}
+						variant={theme === 'dark' ? 'ghost' : 'default'}
+						size="icon"
+						aria-label="Reset"
+					>
+						<RotateCcw className="h-[1.2rem] w-[1.2rem]" />
 					</Button>
 
 					<Button
@@ -51,6 +80,14 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 					</Button>
 				</div>
 			</div>
+
+			<ResetTestDialog
+				isOpen={isResetDialogOpen}
+				onOpenChange={setIsResetDialogOpen}
+				onConfirm={handleResetConfirm}
+				onCancel={handleResetCancel}
+				theme={theme}
+			/>
 		</header>
 	)
 }

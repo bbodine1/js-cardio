@@ -23,7 +23,7 @@ type Test = {
 	assertions: string
 }
 
-const lsKey = 'jsTests'
+export const lsKey = 'jsTests'
 
 export function App() {
 	const [code, setCode] = useState(
@@ -448,6 +448,12 @@ export function App() {
 			<Header
 				theme={theme}
 				toggleTheme={toggleTheme}
+				onResetTests={() => {
+					setTests(DEFAULT_TESTS)
+					setCurrentTest(DEFAULT_TESTS[0])
+					setCode(DEFAULT_TESTS[0].code)
+					setAssertions(DEFAULT_TESTS[0].assertions)
+				}}
 			/>
 
 			<main>
