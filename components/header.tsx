@@ -2,13 +2,15 @@ import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Moon, Sun, Github, AlertCircle, RotateCcw } from 'lucide-react'
 import { ResetTestDialog } from '@/components/reset-test-dialog'
+import { lsKey } from '@/app/app' // Import the lsKey from app.tsx
 
 interface HeaderProps {
 	theme: 'light' | 'dark'
 	toggleTheme: () => void
+	onResetTests: () => void // Add this prop
 }
 
-export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
+export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests }) => {
 	const [isResetDialogOpen, setIsResetDialogOpen] = useState(false)
 
 	const openGitHubRepo = () => {
@@ -24,7 +26,8 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme }) => {
 	}
 
 	const handleResetConfirm = () => {
-		console.log('fired')
+		localStorage.removeItem(lsKey)
+		onResetTests() // Call the callback to update the app
 		setIsResetDialogOpen(false)
 	}
 
