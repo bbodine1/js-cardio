@@ -375,6 +375,10 @@ export function App() {
 
 	const handleKeyDown = useCallback(
 		(event: KeyboardEvent) => {
+			const isEditorFocused =
+				codeEditorRef.current?.contains(document.activeElement) ||
+				assertionsEditorRef.current?.contains(document.activeElement)
+
 			if (event.metaKey || event.ctrlKey) {
 				if (event.key === 'm') {
 					event.preventDefault()
@@ -384,7 +388,7 @@ export function App() {
 					} else if (assertionsEditorRef.current?.contains(activeElement)) {
 						toggleMaximizedEditor('assertions')
 					}
-				} else if (event.key === '/') {
+				} else if (event.key === '/' && !isEditorFocused) {
 					event.preventDefault()
 					setIsShortcutsDialogOpen(prev => !prev)
 				} else if (event.key === ',') {
