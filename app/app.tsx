@@ -9,7 +9,7 @@ import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from './DEFAULT_TESTS'
 import { ShortcutsDialog } from '@/components/shortcuts-dialog'
 import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
-import { Header } from '@/components/header'
+import { Header, TestLevel } from '@/components/header'
 import { EditorSection } from '@/components/editor-section'
 import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
 import { TestNameDialog } from '@/components/new-test-dialog'
@@ -55,6 +55,7 @@ export function App() {
 	const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false)
 	const [pendingTestSelection, setPendingTestSelection] = useState<string | 'new' | null>(null)
 	const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false)
+	const [currentLevel, setCurrentLevel] = useState<TestLevel>('beginner')
 
 	const [tests, setTests] = useState<Test[]>(() => {
 		if (typeof window !== 'undefined') {
@@ -450,6 +451,13 @@ export function App() {
 
 	const isSmallScreen = useMediaQuery('(max-width: 640px)')
 
+	const handleLevelChange = (level: TestLevel) => {
+		setCurrentLevel(level)
+		// You might want to load different tests based on the level
+		// For now, we'll just log the change
+		console.log(`Switched to ${level} level`)
+	}
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<Header
@@ -461,6 +469,8 @@ export function App() {
 					setCode(DEFAULT_TESTS[0].code)
 					setAssertions(DEFAULT_TESTS[0].assertions)
 				}}
+				currentLevel={currentLevel}
+				onLevelChange={handleLevelChange}
 			/>
 
 			<main>
