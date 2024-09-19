@@ -66,13 +66,10 @@ export function App() {
 				} catch (error) {
 					console.error('Error parsing saved tests:', error)
 				}
-			} else {
-				// If no saved tests, set the default tests
-				localStorage.setItem(lsKey, JSON.stringify(DEFAULT_TESTS))
-				return DEFAULT_TESTS
 			}
 		}
-		return []
+		// If no saved tests or parsing failed, return the default tests
+		return DEFAULT_TESTS[currentLevel]
 	})
 
 	useEffect(() => {
@@ -86,19 +83,13 @@ export function App() {
 		if (!localStorage.getItem('theme')) {
 			setTheme(prefersDark ? 'dark' : 'light')
 		}
-		const savedTests = localStorage.getItem(lsKey)
-		if (savedTests) {
-			const parsedTests = JSON.parse(savedTests)
-			setTests(parsedTests)
-			// Set the first test as the active test
-			if (parsedTests.length > 0) {
-				const firstTest = parsedTests[0]
-				setCurrentTest(firstTest)
-				setCode(firstTest.code)
-				setAssertions(firstTest.assertions)
-			}
+		if (tests.length > 0) {
+			const firstTest = tests[0]
+			setCurrentTest(firstTest)
+			setCode(firstTest.code)
+			setAssertions(firstTest.assertions)
 		}
-	}, [setTheme])
+	}, [setTheme, tests])
 
 	useEffect(() => {
 		localStorage.setItem(lsKey, JSON.stringify(tests))
@@ -458,16 +449,22 @@ export function App() {
 		console.log(`Switched to ${level} level`)
 	}
 
+	useEffect(() => {
+		console.log('Current tests:', tests)
+		console.log('Current level:', currentLevel)
+	}, [tests, currentLevel])
+
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
 			<Header
 				theme={theme}
 				toggleTheme={toggleTheme}
 				onResetTests={() => {
-					setTests(DEFAULT_TESTS)
-					setCurrentTest(DEFAULT_TESTS[0])
-					setCode(DEFAULT_TESTS[0].code)
-					setAssertions(DEFAULT_TESTS[0].assertions)
+					const defaultTests = DEFAULT_TESTS[currentLevel]
+					setTests(defaultTests)
+					setCurrentTest(defaultTests[0])
+					setCode(defaultTests[0].code)
+					setAssertions(defaultTests[0].assertions)
 				}}
 				currentLevel={currentLevel}
 				onLevelChange={handleLevelChange}
@@ -484,14 +481,18 @@ export function App() {
 								<SelectValue placeholder="Select a test" />
 							</SelectTrigger>
 							<SelectContent>
-								{tests.map(test => (
-									<SelectItem
-										key={test.id}
-										value={test.id}
-									>
-										{test.name}
-									</SelectItem>
-								))}
+								{tests && tests.length > 0 ? (
+									tests.map(test => (
+										<SelectItem
+											key={test.id}
+											value={test.id}
+										>
+											{test.name}
+										</SelectItem>
+									))
+								) : (
+									<SelectItem value="no-tests">No tests available</SelectItem>
+								)}
 							</SelectContent>
 						</Select>
 
