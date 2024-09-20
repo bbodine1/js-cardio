@@ -57,7 +57,7 @@ export function App() {
 	const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false)
 	const [currentLevel, setCurrentLevel] = useState<TestLevel>('beginner')
 
-	const [tests, setTests] = useState<Test[]>(() => {
+	const [tests, setTests] = useState<Record<TestLevel, Test[]>>(() => {
 		if (typeof window !== 'undefined') {
 			const savedTests = localStorage.getItem(lsKey)
 			if (savedTests) {
@@ -69,7 +69,7 @@ export function App() {
 			}
 		}
 		// If no saved tests or parsing failed, return the default tests
-		return DEFAULT_TESTS[currentLevel]
+		return DEFAULT_TESTS
 	})
 
 	useEffect(() => {
@@ -83,13 +83,14 @@ export function App() {
 		if (!localStorage.getItem('theme')) {
 			setTheme(prefersDark ? 'dark' : 'light')
 		}
-		if (tests.length > 0) {
-			const firstTest = tests[0]
+		const testsForLevel = tests[currentLevel]
+		if (testsForLevel.length > 0) {
+			const firstTest = testsForLevel[0]
 			setCurrentTest(firstTest)
 			setCode(firstTest.code)
 			setAssertions(firstTest.assertions)
 		}
-	}, [setTheme, tests])
+	}, [setTheme, tests, currentLevel])
 
 	useEffect(() => {
 		localStorage.setItem(lsKey, JSON.stringify(tests))
@@ -193,7 +194,10 @@ export function App() {
 					code: '// Write your JavaScript code here',
 					assertions: '// Write your assertions here',
 				}
-				setTests(prevTests => [...prevTests, newTest])
+				setTests(prevTests => ({
+					...prevTests,
+					[currentLevel]: [...prevTests[currentLevel], newTest],
+				}))
 				setCurrentTest(newTest)
 				setCode(newTest.code)
 				setAssertions(newTest.assertions)
@@ -209,10 +213,12 @@ export function App() {
 				})
 			}
 		} else if (dialogState.type === 'edit' && currentTest) {
-			const updatedTests = tests.map(test =>
-				test.id === currentTest.id ? { ...currentTest, name: dialogState.inputValue } : test
-			)
-			setTests(updatedTests)
+			setTests(prevTests => ({
+				...prevTests,
+				[currentLevel]: prevTests[currentLevel].map(test =>
+					test.id === currentTest.id ? { ...currentTest, name: dialogState.inputValue } : test
+				),
+			}))
 			setCurrentTest(prev => (prev ? { ...prev, name: dialogState.inputValue } : null))
 			setDialogState(prev => ({ ...prev, isOpen: false }))
 			toast.success('Test edited successfully!', {
@@ -267,7 +273,12 @@ export function App() {
 
 	const saveCurrentTest = () => {
 		if (currentTest) {
-			setTests(prevTests => prevTests.map(test => (test.id === currentTest.id ? { ...test, code, assertions } : test)))
+			setTests(prevTests => ({
+				...prevTests,
+				[currentLevel]: prevTests[currentLevel].map(test =>
+					test.id === currentTest.id ? { ...test, code, assertions } : test
+				),
+			}))
 			setCurrentTest({ ...currentTest, code, assertions })
 			setHasUnsavedChanges(false)
 			toast.success('Test saved successfully!', {
@@ -288,7 +299,7 @@ export function App() {
 	const confirmDelete = () => {
 		if (currentTest) {
 			setTests(prevTests => {
-				const updatedTests = prevTests.filter(test => test.id !== currentTest.id)
+				const updatedTests = prevTests[currentLevel].filter(test => test.id !== currentTest.id)
 
 				// Select the first available test or set to null if no tests remain
 				const nextTest = updatedTests.length > 0 ? updatedTests[0] : null
@@ -305,7 +316,10 @@ export function App() {
 						code: '// Write your JavaScript code here\nfunction sum(a, b) {\n  return a + b;\n}\n\nconsole.log(sum(1, 2));',
 						assertions: '// Write your assertions here\nassert(sum(1, 2) === 3);\nassert(sum(-1, 1) === 0);',
 					}
-					setTests([defaultTest])
+					setTests(prevTests => ({
+						...prevTests,
+						[currentLevel]: [defaultTest],
+					}))
 					setCurrentTest(defaultTest)
 					setCode(defaultTest.code)
 					setAssertions(defaultTest.assertions)
@@ -320,7 +334,10 @@ export function App() {
 						color: theme === 'dark' ? '#fff' : '#333',
 					},
 				})
-				return updatedTests
+				return {
+					...prevTests,
+					[currentLevel]: updatedTests,
+				}
 			})
 		}
 		setIsDeleteDialogOpen(false)
@@ -343,7 +360,7 @@ export function App() {
 	}
 
 	const selectTest = (testId: string) => {
-		const selected = tests.find(test => test.id === testId)
+		const selected = tests[currentLevel].find(test => test.id === testId)
 		if (selected) {
 			setCurrentTest(selected)
 			setCode(selected.code)
@@ -444,9 +461,20 @@ export function App() {
 
 	const handleLevelChange = (level: TestLevel) => {
 		setCurrentLevel(level)
-		// You might want to load different tests based on the level
-		// For now, we'll just log the change
-		console.log(`Switched to ${level} level`)
+		const testsForLevel = tests[level]
+		if (testsForLevel.length > 0) {
+			const firstTest = testsForLevel[0]
+			setCurrentTest(firstTest)
+			setCode(firstTest.code)
+			setAssertions(firstTest.assertions)
+		} else {
+			setCurrentTest(null)
+			setCode('')
+			setAssertions('')
+		}
+		setHasUnsavedChanges(false)
+		setResults('')
+		setConsoleOutput('')
 	}
 
 	useEffect(() => {
@@ -460,11 +488,11 @@ export function App() {
 				theme={theme}
 				toggleTheme={toggleTheme}
 				onResetTests={() => {
-					const defaultTests = DEFAULT_TESTS[currentLevel]
-					setTests(defaultTests)
-					setCurrentTest(defaultTests[0])
-					setCode(defaultTests[0].code)
-					setAssertions(defaultTests[0].assertions)
+					setTests(DEFAULT_TESTS)
+					const defaultTest = DEFAULT_TESTS[currentLevel][0]
+					setCurrentTest(defaultTest)
+					setCode(defaultTest.code)
+					setAssertions(defaultTest.assertions)
 				}}
 				currentLevel={currentLevel}
 				onLevelChange={handleLevelChange}
@@ -481,8 +509,8 @@ export function App() {
 								<SelectValue placeholder="Select a test" />
 							</SelectTrigger>
 							<SelectContent>
-								{tests && tests.length > 0 ? (
-									tests.map(test => (
+								{tests[currentLevel] && tests[currentLevel].length > 0 ? (
+									tests[currentLevel].map(test => (
 										<SelectItem
 											key={test.id}
 											value={test.id}
