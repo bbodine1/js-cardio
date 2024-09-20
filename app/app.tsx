@@ -56,6 +56,7 @@ export function App() {
 	const [pendingTestSelection, setPendingTestSelection] = useState<string | 'new' | null>(null)
 	const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false)
 	const [currentLevel, setCurrentLevel] = useState<TestLevel>('beginner')
+	const [pendingLevelChange, setPendingLevelChange] = useState<TestLevel | null>(null)
 
 	const [tests, setTests] = useState<Record<TestLevel, Test[]>>(() => {
 		if (typeof window !== 'undefined') {
@@ -435,7 +436,10 @@ export function App() {
 			openNewTestDialogDirectly()
 		} else if (pendingTestSelection) {
 			selectTest(pendingTestSelection)
+		} else if (pendingLevelChange) {
+			switchToNewLevel(pendingLevelChange)
 		}
+		setPendingLevelChange(null)
 	}
 
 	const handleDontSave = () => {
@@ -444,7 +448,11 @@ export function App() {
 			openNewTestDialogDirectly()
 		} else if (pendingTestSelection) {
 			selectTest(pendingTestSelection)
+		} else if (pendingLevelChange) {
+			switchToNewLevel(pendingLevelChange)
 		}
+		setPendingLevelChange(null)
+		setHasUnsavedChanges(false)
 	}
 
 	const handleCodeChange = (value: string) => {
@@ -459,9 +467,20 @@ export function App() {
 
 	const isSmallScreen = useMediaQuery('(max-width: 640px)')
 
-	const handleLevelChange = (level: TestLevel) => {
-		setCurrentLevel(level)
-		const testsForLevel = tests[level]
+	const handleLevelChange = (newLevel: TestLevel) => {
+		if (hasUnsavedChanges) {
+			setPendingTestSelection(null) // Clear any pending test selection
+			setIsSaveDialogOpen(true)
+			// Store the new level to switch to after save confirmation
+			setPendingLevelChange(newLevel)
+		} else {
+			switchToNewLevel(newLevel)
+		}
+	}
+
+	const switchToNewLevel = (newLevel: TestLevel) => {
+		setCurrentLevel(newLevel)
+		const testsForLevel = tests[newLevel]
 		if (testsForLevel.length > 0) {
 			const firstTest = testsForLevel[0]
 			setCurrentTest(firstTest)
@@ -472,9 +491,8 @@ export function App() {
 			setCode('')
 			setAssertions('')
 		}
-		setHasUnsavedChanges(false)
-		setResults('')
 		setConsoleOutput('')
+		setHasUnsavedChanges(false)
 	}
 
 	useEffect(() => {
@@ -715,6 +733,7 @@ export function App() {
 				onOpenChange={setIsSaveDialogOpen}
 				theme={theme}
 				pendingTestSelection={pendingTestSelection}
+				pendingLevelChange={pendingLevelChange}
 				onSave={handleSaveConfirmation}
 				onDontSave={handleDontSave}
 			/>
