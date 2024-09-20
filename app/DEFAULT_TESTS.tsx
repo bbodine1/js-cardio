@@ -49,7 +49,7 @@ export const DEFAULT_TESTS = {
 		{
 			id: '1725236503594',
 			name: 'Longest Word',
-			code: "// CHALLENGE 1: LONGEST WORD\n// Return the longest word of a string\n// ex. longestWord('Hi there, my name is Brad') === 'there,'\n\nfunction longestWord(sen) {\n  // SOLUTION 1 - Return a single longest word\n  // SOLUTION 2 - Return an array and include multiple words if they have the same length\n  // SOLUTION 3 - Only return an array if multiple words, otherwise return a string\n}",
+			code: "// CHALLENGE 1: LONGEST WORD\n// Return the longest word of a string\n// ex. longestWord('Hi there, my name is Brad') === 'there,'\n\n// SOLUTION 1 - Return a single longest word\n// SOLUTION 2 - Return an array and include multiple words if they have the same length\n// SOLUTION 3 - Only return an array if multiple words, otherwise return a string\n\nfunction longestWord(sen) {\n\n}",
 			assertions:
 				"assert(longestWord('Hi there, my name is Brad') === 'there,', \"longestWord('Hi there, my name is Brad') should return 'there,'\");\nassert(JSON.stringify(longestWord('Hello, my name is Brad')) === JSON.stringify(['Hello,', 'name']), \"longestWord('Hello, my name is Brad') should return ['Hello,', 'name']\");\nassert(longestWord('Brad') === 'Brad', \"longestWord('Brad') should return 'Brad'\");\nassert(JSON.stringify(longestWord('I love dogs')) === JSON.stringify(['love', 'dogs']), \"longestWord('I love dogs') should return ['love', 'dogs']\");\nassert(longestWord('') === '', \"longestWord('') should return ''\");\n",
 		},
