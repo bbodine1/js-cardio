@@ -4,9 +4,7 @@ import { Moon, Sun, Github, AlertCircle, RotateCcw, ChevronDown } from 'lucide-r
 import { ResetTestDialog } from '@/components/reset-test-dialog'
 import { lsKey } from '@/app/app'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-
-// Add this type definition
-export type TestLevel = 'beginner' | 'intermediate' | 'advanced'
+import { TestLevel } from '@/types/testlevels'
 
 interface HeaderProps {
 	theme: 'light' | 'dark'
@@ -56,9 +54,9 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests
 							<Button
 								key={level}
 								onClick={() => onLevelChange(level)}
-								variant={currentLevel === level ? 'default' : 'outline'}
+								variant={currentLevel === level ? 'outline' : 'default'}
 								size="sm"
-								className={theme === 'dark' ? 'bg-gray-800 text-white hover:bg-gray-700' : ''}
+								className={theme === 'dark' ? 'bg-gray-800 text-white hover:bg-gray-700 hover:text-white' : ''}
 							>
 								{level.charAt(0).toUpperCase() + level.slice(1)}
 							</Button>
@@ -99,7 +97,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests
 						variant="ghost"
 						size="icon"
 						aria-label="Open GitHub repository"
-						className={theme === 'dark' ? 'text-white hover:bg-gray-800' : ''}
+						className={theme === 'dark' ? 'text-white hover:bg-gray-800 hover:text-white' : ''}
 					>
 						<Github className="h-[1.2rem] w-[1.2rem]" />
 					</Button>
@@ -109,7 +107,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests
 						variant="ghost"
 						size="icon"
 						aria-label="Reset"
-						className={theme === 'dark' ? 'text-white hover:bg-gray-800' : ''}
+						className={theme === 'dark' ? 'text-white hover:bg-gray-800 hover:text-white' : ''}
 					>
 						<RotateCcw className="h-[1.2rem] w-[1.2rem]" />
 					</Button>
@@ -119,7 +117,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests
 						variant="ghost"
 						size="icon"
 						aria-label="Open new issue page"
-						className={theme === 'dark' ? 'text-white hover:bg-gray-800' : ''}
+						className={theme === 'dark' ? 'text-white hover:bg-gray-800 hover:text-white' : ''}
 					>
 						<AlertCircle className="h-[1.2rem] w-[1.2rem]" />
 					</Button>
@@ -130,7 +128,7 @@ export const Header: React.FC<HeaderProps> = ({ theme, toggleTheme, onResetTests
 						size="icon"
 						aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
 						data-testid="theme-toggle-btn"
-						className={theme === 'dark' ? 'text-white hover:bg-gray-800' : ''}
+						className={theme === 'dark' ? 'text-white hover:bg-gray-800 hover:text-white' : ''}
 					>
 						{theme === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
 					</Button>

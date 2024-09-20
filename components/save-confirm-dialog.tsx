@@ -9,8 +9,7 @@ import {
 	DialogTitle,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-
-type TestLevel = 'beginner' | 'intermediate' | 'advanced'
+import { TestLevel } from '@/types/testlevels'
 
 interface SaveConfirmationDialogProps {
 	isOpen: boolean

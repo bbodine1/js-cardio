@@ -9,20 +9,15 @@ import { vscodeLightTheme, vscodeDarkTheme } from '@/app/cm-themes'
 import { DEFAULT_TESTS } from './DEFAULT_TESTS'
 import { ShortcutsDialog } from '@/components/shortcuts-dialog'
 import { DeleteConfirmationDialog } from '@/components/delete-confirm-dialog'
-import { Header, TestLevel } from '@/components/header'
+import { Header } from '@/components/header'
 import { EditorSection } from '@/components/editor-section'
 import { SaveConfirmationDialog } from '@/components/save-confirm-dialog'
 import { TestNameDialog } from '@/components/new-test-dialog'
 import { useLocalStorage } from '@/hooks/useLocalStorage'
 import { Toaster, toast } from 'react-hot-toast'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
-
-type Test = {
-	id: string
-	name: string
-	code: string
-	assertions: string
-}
+import { Test } from '@/types/tests'
+import { TestLevel } from '@/types/testlevels'
 
 export const lsKey = 'jsTests'
 
@@ -106,10 +101,9 @@ export function App() {
 		}
 
 		const assertionResults: string[] = []
-		// eslint-disable-next-line prefer-const
-		let assertionCount = 0
-		// eslint-disable-next-line prefer-const
-		let failedAssertions = 0
+
+		const assertionCount = 0
+		const failedAssertions = 0
 
 		try {
 			// Combine code and assertions
@@ -494,11 +488,6 @@ export function App() {
 		setConsoleOutput('')
 		setHasUnsavedChanges(false)
 	}
-
-	useEffect(() => {
-		console.log('Current tests:', tests)
-		console.log('Current level:', currentLevel)
-	}, [tests, currentLevel])
 
 	return (
 		<div className={`min-h-screen p-4 ${theme === 'dark' ? 'bg-gray-900 text-white' : 'bg-white text-black'}`}>
